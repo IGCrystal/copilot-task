@@ -97,11 +97,16 @@ export function useImageTransform({
 
     const containerRect = containerEl?.getBoundingClientRect();
     if (!containerRect) return;
+    // During breakpoint switches / resize, layout can temporarily report 0 sizes.
+    // Avoid producing NaN/Infinity MotionValues (which can crash framer-motion).
+    if (containerRect.width <= 0 || containerRect.height <= 0) return;
 
     const topLeftRect = topLeftEl.getBoundingClientRect();
     const centerRect = centerEl.getBoundingClientRect();
     const bottomMiddleRect = bottomMiddleEl?.getBoundingClientRect();
     const bottomRightRect = bottomRightEl.getBoundingClientRect();
+
+    if (centerRect.width <= 0 || centerRect.height <= 0) return;
 
     // Convert to container-relative coordinates
     const topLeft = {
@@ -131,6 +136,8 @@ export function useImageTransform({
       height: bottomRightRect.height,
     };
 
+    let hadInvalidMeasurement = false;
+
     const positions = phasesRef.current.map((phase) => {
       const { rowStart, columnStart } = phase.gridPosition;
 
@@ -145,7 +152,18 @@ export function useImageTransform({
       }
 
       // Calculate scale relative to center (the hero position)
+      // If a target rect is temporarily 0-sized (e.g. during responsive relayout),
+      // keep the previous measurement instead of emitting NaN/Infinity.
+      if (targetRect.width <= 0 || targetRect.height <= 0) {
+        hadInvalidMeasurement = true;
+        return { x: 0, y: 0, scale: 1 };
+      }
+
       const scaleFactor = targetRect.width / center.width;
+      if (!Number.isFinite(scaleFactor) || scaleFactor <= 0) {
+        hadInvalidMeasurement = true;
+        return { x: 0, y: 0, scale: 1 };
+      }
 
       // Calculate offset from center
       const xOffset =
@@ -160,8 +178,22 @@ export function useImageTransform({
         yOffset += (targetRect.height * (1 - scaleFactor)) / adjustmentDivisor;
       }
 
-      return { x: xOffset, y: yOffset, scale: scaleFactor };
+      const result = { x: xOffset, y: yOffset, scale: scaleFactor };
+      if (
+        !Number.isFinite(result.x) ||
+        !Number.isFinite(result.y) ||
+        !Number.isFinite(result.scale)
+      ) {
+        hadInvalidMeasurement = true;
+        return { x: 0, y: 0, scale: 1 };
+      }
+
+      return result;
     });
+
+    // If any phase had to fall back, keep output stable by not updating with partial junk.
+    // This avoids sudden disappears during breakpoint transitions.
+    if (hadInvalidMeasurement) return;
 
     setMeasuredPositions(positions);
   };

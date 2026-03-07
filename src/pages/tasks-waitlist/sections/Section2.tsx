@@ -171,9 +171,13 @@ export function Section2({ sectionRef: externalSectionRef }: Section2Props) {
       if (!containerRef.current || !contentRef.current) return;
       const cRect = containerRef.current.getBoundingClientRect();
       const sRect = contentRef.current.getBoundingClientRect();
+      if (cRect.width <= 0 || cRect.height <= 0) return;
+      if (sRect.width <= 0 || sRect.height <= 0) return;
       const scaleX = cRect.width / sRect.width;
       const scaleY = cRect.height / sRect.height;
-      setBgScale(Math.max(scaleX, scaleY) * 1.05);
+      const next = Math.max(scaleX, scaleY) * 1.05;
+      if (!Number.isFinite(next) || next <= 0) return;
+      setBgScale(next);
     };
     const timeout = setTimeout(compute, 100);
     let resizeTimer: ReturnType<typeof setTimeout> | null = null;

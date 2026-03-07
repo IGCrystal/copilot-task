@@ -85,27 +85,43 @@ function Section3Content({ isNarrow, sectionRef }: Section3ContentProps) {
   // Background div opacity (fades in as exit happens)
   const staticZero = useMotionValue(0);
   const staticOne = useMotionValue(1);
-  const bgOpacity = isNarrowOrReduced
-    ? staticZero
-    : useTransform(exitProgress, [0, 1], [0, 1]);
+  const bgOpacityAnimated = useTransform(exitProgress, [0, 1], [0, 1]);
+  const bgOpacity = isNarrowOrReduced ? staticZero : bgOpacityAnimated;
 
   // Header animations
-  const headerOpacity = isNarrowOrReduced
-    ? staticOne
-    : useTransform(entryProgress, [0, 0.5], [0, 1], { ease: defaultEasing });
+  const headerOpacityAnimated = useTransform(
+    entryProgress,
+    [0, 0.5],
+    [0, 1],
+    { ease: defaultEasing },
+  );
+  const headerOpacity = isNarrowOrReduced ? staticOne : headerOpacityAnimated;
 
-  const headerScale = isNarrowOrReduced
-    ? staticOne
-    : useTransform(entryProgress, [0, 1], [0.8, 1], { ease: defaultEasing });
+  const headerScaleAnimated = useTransform(
+    entryProgress,
+    [0, 1],
+    [0.8, 1],
+    { ease: defaultEasing },
+  );
+  const headerScale = isNarrowOrReduced ? staticOne : headerScaleAnimated;
 
   // Content squircle opacity & y offset
-  const contentOpacity = isNarrowOrReduced
-    ? staticOne
-    : useTransform(entryProgress, [0, 0.5], [0, 1], { ease: defaultEasing });
+  const contentOpacityAnimated = useTransform(
+    entryProgress,
+    [0, 0.5],
+    [0, 1],
+    { ease: defaultEasing },
+  );
+  const contentOpacity = isNarrowOrReduced ? staticOne : contentOpacityAnimated;
 
-  const contentY = isNarrowOrReduced
-    ? useMotionValue("0dvh")
-    : useTransform(entryProgress, [0.5, 1], ["25dvh", "0dvh"], { ease: defaultEasing });
+  const contentYStatic = useMotionValue("0dvh");
+  const contentYAnimated = useTransform(
+    entryProgress,
+    [0.5, 1],
+    ["25dvh", "0dvh"],
+    { ease: defaultEasing },
+  );
+  const contentY = isNarrowOrReduced ? contentYStatic : contentYAnimated;
 
   return (
     <>
@@ -303,7 +319,8 @@ function FeatureItem({
     [index * 100, (index - totalItems) * 100],
   );
 
-  const yValue = isNarrow ? undefined : useMotionTemplate`${yPercent}%`;
+  // Always call hooks in a stable order; only conditionally *use* the value.
+  const yValue = useMotionTemplate`${yPercent}%`;
 
   return (
     <motion.div

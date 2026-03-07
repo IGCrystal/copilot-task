@@ -10,8 +10,8 @@
  * Narrow viewports: simple stacked image cards.
  */
 
-import React, { useRef, useMemo, useState, useLayoutEffect } from "react";
-import { motion, useMotionValue, useTransform, useMotionTemplate, useMotionValueEvent } from "framer-motion";
+import React, { useRef, useMemo, useState, useLayoutEffect, useEffect } from "react";
+import { motion, useMotionValue, useTransform, useMotionTemplate } from "framer-motion";
 import type { MotionValue } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { useTranslation } from "@/lib/i18n";
@@ -201,7 +201,7 @@ function WideCarousel({ scrollYProgress }: WideCarouselProps) {
           {/* Invisible reference elements for position measurement */}
           <div
             ref={topLeftRef}
-            className="pointer-events-none invisible hidden [grid-column:3/5] [grid-row:1] [@media(min-width:1024px)]:block"
+            className="pointer-events-none invisible [grid-column:3/5] [grid-row:1]"
             aria-hidden="true"
           />
           <div
@@ -355,16 +355,29 @@ function ImageOverlay({
 
   const [transformOrigin, setTransformOrigin] = useState(initialOrigin);
 
-  useMotionValueEvent(scrollYProgress, "change", (p) => {
-    if (!config.exitScaleRange) {
-      if (transformOrigin !== initialOrigin) setTransformOrigin(initialOrigin);
-      return;
-    }
-    const exitStart = config.exitScaleRange[0];
-    const newOrigin =
-      p < exitStart ? initialOrigin : "origin-top-left rtl:origin-top-right";
-    if (newOrigin !== transformOrigin) setTransformOrigin(newOrigin);
-  });
+  // NOTE: useMotionValueEvent may invoke the callback synchronously during subscription
+  // in some cases, which can trigger "Cannot update a component while rendering a different component".
+  // Subscribe post-commit instead.
+  useEffect(() => {
+    const computeOrigin = (p: number) => {
+      if (!config.exitScaleRange) return initialOrigin;
+      const exitStart = config.exitScaleRange[0];
+      return p < exitStart
+        ? initialOrigin
+        : "origin-top-left rtl:origin-top-right";
+    };
+
+    // Sync once after mount
+    setTransformOrigin((prev) => {
+      const next = computeOrigin(scrollYProgress.get());
+      return prev === next ? prev : next;
+    });
+
+    return scrollYProgress.on("change", (p) => {
+      const next = computeOrigin(p);
+      setTransformOrigin((prev) => (prev === next ? prev : next));
+    });
+  }, [scrollYProgress, initialOrigin, config.exitScaleRange]);
 
   // Build transform strings via useMotionTemplate
   const translateTransform = useMotionTemplate`translateX(${x}px) translateY(${y}px)`;
