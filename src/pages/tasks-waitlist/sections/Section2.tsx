@@ -1,0 +1,446 @@
+/**
+ * Section2 - Rolodex sentence animation.
+ *
+ * The core visual experience: a sentence like "I want to [create] a
+ * [presentation] for my [report]" where the bracketed words flip through
+ * three variations in a split-flap / rolodex style.
+ *
+ * Wide viewports: scroll-driven animation that flips on scroll.
+ * Narrow viewports: auto-playing timer-based animation with pause/play.
+ *
+ * At the end of the scroll range the dark background shrinks into a
+ * squircle card and the content scales/blurs to transition into Section 3.
+ */
+
+import React, { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import { motion, useMotionValue, useTransform } from "framer-motion";
+import { cn } from "@/lib/utils";
+import { useTranslation } from "@/lib/i18n";
+import { useReducedMotion } from "@/lib/hooks";
+import { defaultEasing } from "@/lib/easing";
+import {
+  SCROLL_KEYFRAMES as K,
+  CONTENT_MAX_WIDTH,
+  LAYOUT_CONFIG,
+} from "../constants";
+import { useSectionContext } from "../context/SectionContext";
+import { useLenisScrollContext } from "../context/LenisScrollContext";
+import { RolodexItem } from "../components/RolodexItem";
+import {
+  getRolodexItems,
+  getDiagonalIndex,
+  getMaxDiagonalIndex,
+} from "../data/rolodex-items";
+import { useRolodexAnimation } from "../hooks/useRolodexAnimation";
+import { useOverflowDetection } from "../hooks/useOverflowDetection";
+import { useScrollProgress } from "../hooks/useScrollProgress";
+import type { RolodexLayout, RolodexItemWithStagger } from "../types";
+
+// Content text classes shared between visible and hidden reference divs
+const CONTENT_TEXT_CLASSES = cn(
+  "!text-[52px] !leading-[52px] text-4xl-medium",
+  "lg:!text-[80px] lg:!leading-[80px]",
+  "lg:p-12",
+  "[@media(max-height:720px)]:!text-[52px] [@media(max-height:720px)]:!leading-[52px]",
+  "[@media(max-height:720px)]:p-6 [@media(max-height:720px)]:py-14",
+);
+
+// ===================== Main Component =====================
+
+interface Section2Props {
+  sectionRef?: React.RefObject<HTMLElement>;
+}
+
+export function Section2({ sectionRef: externalSectionRef }: Section2Props) {
+  const { scrollYProgress, sticky, sectionRef: contextSectionRef } = useSectionContext();
+  const { isNarrow, lenisScroll } = useLenisScrollContext();
+  const shouldReduceMotion = useReducedMotion() === true;
+  const { t } = useTranslation();
+  const sectionRef = externalSectionRef ?? (contextSectionRef as React.RefObject<HTMLElement>);
+
+  const [isPaused, setIsPaused] = useState(() => shouldReduceMotion);
+
+  const containerRef = useRef<HTMLDivElement>(null);
+  const contentRef = useRef<HTMLDivElement>(null);
+  const squircleRef = useRef<HTMLDivElement>(null);
+  const refContentRef = useRef<HTMLDivElement>(null);
+
+  // Narrow auto-play animation
+  const autoProgress = useRolodexAnimation({ paused: isPaused });
+
+  // Main animation driver
+  const sectionProgress = scrollYProgress ?? lenisScroll;
+  const progress = isNarrow ? autoProgress : sectionProgress;
+
+  // Exit scroll: tracks when section end passes through viewport
+  const exitOffset = useMemo<[string, string]>(
+    () => ["end start", "end end"],
+    [],
+  );
+  const { scrollYProgress: exitProgress } = useScrollProgress({
+    target: sectionRef,
+    offset: exitOffset,
+    lenisScroll,
+  });
+
+  // Layout detection
+  const isOverflowing = useOverflowDetection({
+    containerRef,
+    childRef: refContentRef,
+    threshold: LAYOUT_CONFIG.layoutSwitchThreshold,
+  });
+  const layout: RolodexLayout = isOverflowing ? "5-line" : "3-line";
+  const items = useMemo(() => prepareItems(layout), [layout]);
+  const referenceItems = useMemo(() => prepareItems("3-line"), []);
+
+  // Row groups
+  const rowCount = layout === "5-line" ? 5 : 3;
+  const rows = useMemo(
+    () =>
+      Array.from({ length: rowCount }, (_, i) =>
+        items.filter((item) => item.row === i),
+      ),
+    [rowCount, items],
+  );
+  const referenceRows = useMemo(
+    () =>
+      Array.from({ length: 3 }, (_, i) =>
+        referenceItems.filter((item) => item.row === i),
+      ),
+    [referenceItems],
+  );
+
+  // --- Content animations ---
+  const useStatic = isNarrow || shouldReduceMotion;
+
+  const scaleAnim = useTransform(
+    progress,
+    [K.INTRO_START, K.ROLODEX_1_START, K.HOLD_3_END, K.SCALE_START],
+    [0.95, 1, 1, 0.95],
+    { clamp: true, ease: defaultEasing },
+  );
+  const yOffsetAnim = useTransform(
+    progress,
+    [K.INTRO_START, K.ROLODEX_1_START],
+    [10, 0],
+    { clamp: true, ease: defaultEasing },
+  );
+  const opacityAnim = useTransform(
+    progress,
+    [K.INTRO_START, K.INTRO_END, K.SCALE_PREP_END, K.SCALE_END],
+    [0, 1, 1, 1],
+    { clamp: true, ease: defaultEasing },
+  );
+  const blurAnim = useTransform(
+    progress,
+    [K.INTRO_START, K.INTRO_END, K.SCALE_PREP_END, K.SCALE_END],
+    ["blur(10px)", "blur(0px)", "blur(0px)", "blur(0px)"],
+    { clamp: false, ease: defaultEasing },
+  );
+  const introOpacityAnim = useTransform(
+    progress,
+    [K.HOLD_3_START, K.HOLD_3_END],
+    [1, 0],
+    { clamp: true, ease: defaultEasing },
+  );
+  const introVisibilityAnim = useTransform(
+    progress,
+    [K.HOLD_3_END - 0.001, K.HOLD_3_END],
+    ["visible", "hidden"],
+    { clamp: true },
+  );
+
+  // Static values for narrow / reduced-motion
+  const staticOne = useMotionValue(1);
+  const staticZero = useMotionValue(0);
+  const staticBlur = useMotionValue("blur(0px)");
+  const staticVisible = useMotionValue("visible" as string);
+
+  const contentScale = useStatic ? staticOne : scaleAnim;
+  const contentY = useStatic ? staticZero : yOffsetAnim;
+  const contentOpacity = useStatic ? staticOne : opacityAnim;
+  const contentBlur = useStatic ? staticBlur : blurAnim;
+  const introOpacity = useStatic ? staticOne : introOpacityAnim;
+  const introVisibility = useStatic ? staticVisible : introVisibilityAnim;
+
+  // --- Background squircle dynamic scale ---
+  const [bgScale, setBgScale] = useState(2.5);
+
+  useEffect(() => {
+    const compute = () => {
+      if (!containerRef.current || !contentRef.current) return;
+      const cRect = containerRef.current.getBoundingClientRect();
+      const sRect = contentRef.current.getBoundingClientRect();
+      const scaleX = cRect.width / sRect.width;
+      const scaleY = cRect.height / sRect.height;
+      setBgScale(Math.max(scaleX, scaleY) * 1.05);
+    };
+    const timeout = setTimeout(compute, 100);
+    let resizeTimer: ReturnType<typeof setTimeout> | null = null;
+    const onResize = () => {
+      if (resizeTimer) clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(() => {
+        compute();
+        resizeTimer = null;
+      }, 400);
+    };
+    window.addEventListener("resize", onResize);
+    return () => {
+      clearTimeout(timeout);
+      if (resizeTimer) clearTimeout(resizeTimer);
+      window.removeEventListener("resize", onResize);
+    };
+  }, []);
+
+  // Exit y-offset: content lifts up as user scrolls past
+  const [centerOffset, setCenterOffset] = useState(0);
+
+  useLayoutEffect(() => {
+    const compute = () => {
+      if (!containerRef.current || !contentRef.current) return;
+      const cH = containerRef.current.getBoundingClientRect().height;
+      const sH = contentRef.current.getBoundingClientRect().height;
+      setCenterOffset((cH - sH) / 2);
+    };
+    const timeout = setTimeout(compute, 300);
+    let resizeTimer: ReturnType<typeof setTimeout> | null = null;
+    const onResize = () => {
+      if (resizeTimer) clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(() => {
+        compute();
+        resizeTimer = null;
+      }, 400);
+    };
+    window.addEventListener("resize", onResize);
+    return () => {
+      clearTimeout(timeout);
+      if (resizeTimer) clearTimeout(resizeTimer);
+      window.removeEventListener("resize", onResize);
+    };
+  }, [bgScale]);
+
+  // Background squircle & dark layer transitions
+  const bgSquircleScaleAnim = useTransform(
+    sectionProgress,
+    [K.HOLD_3_END, K.SCALE_START],
+    [bgScale, 1],
+    { clamp: true, ease: defaultEasing },
+  );
+  const bgSquircleOpacityAnim = useTransform(
+    sectionProgress,
+    [K.HOLD_3_END - 0.01, K.HOLD_3_END],
+    [0, 1],
+    { clamp: true, ease: defaultEasing },
+  );
+  const darkLayerOpacityAnim = useTransform(
+    sectionProgress,
+    [K.HOLD_3_END, K.HOLD_3_END + 0.01],
+    [1, 0],
+    { clamp: true, ease: defaultEasing },
+  );
+  const exitYAnim = useTransform(
+    exitProgress,
+    [0, 1],
+    [0, centerOffset / 2],
+    { clamp: true, ease: defaultEasing },
+  );
+
+  const finalBgScale = shouldReduceMotion ? staticOne : bgSquircleScaleAnim;
+  const finalBgOpacity = shouldReduceMotion ? staticOne : bgSquircleOpacityAnim;
+  const finalDarkOpacity = shouldReduceMotion ? staticOne : darkLayerOpacityAnim;
+  const finalExitY = shouldReduceMotion ? staticZero : exitYAnim;
+
+  return (
+    <motion.div
+      ref={containerRef}
+      className={cn(
+        "mb-24 flex items-center justify-center bg-background-250 px-4 pt-12 sm:bg-transparent sm:px-8 md:py-0",
+        sticky ? "sticky top-0" : "relative",
+      )}
+      style={{
+        height: isNarrow ? undefined : "100dvh",
+      }}
+    >
+      {/* Dark background layer - only when NOT narrow */}
+      {!isNarrow && (
+        <motion.div
+          className="absolute inset-0 bg-[#423B3E] will-change-[opacity] dark:bg-background-150"
+          style={{ opacity: finalDarkOpacity }}
+        />
+      )}
+
+      {/* Content wrapper */}
+      <motion.div
+        className="relative flex w-full flex-col items-center justify-center text-white/80"
+        style={{ y: isNarrow ? 0 : finalExitY }}
+      >
+        {/* Squircle background panel */}
+        <motion.div
+          ref={squircleRef}
+          className={cn(
+            "pointer-events-none absolute size-full bg-[#423B3E] will-change-[transform,opacity] squircle-24 dark:bg-background-150 md:squircle-48",
+            CONTENT_MAX_WIDTH,
+          )}
+          style={{
+            scale: isNarrow ? 1 : finalBgScale,
+            opacity: isNarrow ? 1 : finalBgOpacity,
+          }}
+        />
+
+        {/* Text content */}
+        <motion.div
+          ref={contentRef}
+          className={cn(
+            "relative max-w-full p-6 pb-20 pt-16 will-change-[transform,opacity,filter] md:py-14",
+            CONTENT_TEXT_CLASSES,
+          )}
+          style={{
+            y: contentY,
+            opacity: contentOpacity,
+            scale: contentScale,
+            filter: contentBlur,
+            contain: "layout style paint",
+          }}
+        >
+          {/* Intro text */}
+          <motion.div
+            className={cn(
+              "mb-10 flex justify-start ps-1 text-md md:mb-0 md:h-0 lg:ps-2 lg:text-lg",
+              "[@media(max-height:720px)]:ps-1 [@media(max-height:720px)]:text-md",
+            )}
+            style={{
+              opacity: introOpacity,
+              visibility: introVisibility as any,
+            }}
+          >
+            <div className="relative md:bottom-12">
+              {t("tasks.waitList.section2.introText")}
+            </div>
+          </motion.div>
+
+          {/* Row-based items */}
+          {rows.map((row, rowIdx) => (
+            <div key={rowIdx} className="mb-2">
+              {row.map((item, itemIdx) => (
+                <span key={item.id}>
+                  <RolodexItem
+                    item={item}
+                    scrollProgress={progress}
+                    rolodex1Start={K.ROLODEX_1_START}
+                    rolodex1End={K.ROLODEX_1_END}
+                    rolodex2Start={K.ROLODEX_2_START}
+                    rolodex2End={K.ROLODEX_2_END}
+                    diagonalStagger={item.diagonalStagger}
+                    isNarrow={isNarrow}
+                  />
+                  {itemIdx < row.length - 1 && " "}
+                </span>
+              ))}
+            </div>
+          ))}
+        </motion.div>
+
+        {/* Narrow pause/play button */}
+        {isNarrow && (
+          <button
+            type="button"
+            aria-label={t(
+              isPaused
+                ? "tasks.waitList.section2.carouselPlay"
+                : "tasks.waitList.section2.carouselPause",
+            )}
+            aria-pressed={isPaused}
+            onClick={() => setIsPaused((p) => !p)}
+            className={cn(
+              "pointer-events-auto absolute bottom-4 end-4 flex size-8 items-center justify-center rounded-full",
+              "bg-white/10 text-white backdrop-blur-sm transition-colors hover:bg-white/20",
+              "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white",
+            )}
+          >
+            {isPaused ? (
+              <PlayIcon className="size-4" />
+            ) : (
+              <PauseIcon className="size-4" />
+            )}
+          </button>
+        )}
+      </motion.div>
+
+      {/* Hidden reference div for 3-line measurement (used for scale calc) */}
+      <div
+        className="pointer-events-none invisible absolute inset-0 flex items-center justify-center"
+        aria-hidden="true"
+      >
+        <div
+          ref={refContentRef}
+          className={cn(
+            "max-w-full p-6 py-14",
+            CONTENT_TEXT_CLASSES,
+          )}
+        >
+          {referenceRows.map((row, rowIdx) => (
+            <div key={rowIdx} className="mb-2">
+              {row.map((item, itemIdx) => (
+                <span key={item.id}>
+                  <span className="inline-block">
+                    {item.type === "image" ? (
+                      <span className="inline-block size-24" />
+                    ) : (
+                      item.content1
+                    )}
+                  </span>
+                  {itemIdx < row.length - 1 && " "}
+                </span>
+              ))}
+            </div>
+          ))}
+        </div>
+      </div>
+    </motion.div>
+  );
+}
+
+// ===================== Helpers =====================
+
+/** Enrich items with diagonal stagger values */
+function prepareItems(layout: RolodexLayout): RolodexItemWithStagger[] {
+  const rawItems = getRolodexItems(layout);
+  const maxDiagonal = getMaxDiagonalIndex(rawItems);
+
+  return rawItems.map((item) => ({
+    ...item,
+    diagonalStagger:
+      maxDiagonal > 0
+        ? getDiagonalIndex(item.row, item.col) / maxDiagonal
+        : 0,
+  }));
+}
+
+// ===================== Inline Icons =====================
+
+function PauseIcon({ className }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="currentColor"
+      className={className}
+      aria-hidden="true"
+    >
+      <rect x="6" y="4" width="4" height="16" rx="1" />
+      <rect x="14" y="4" width="4" height="16" rx="1" />
+    </svg>
+  );
+}
+
+function PlayIcon({ className }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="currentColor"
+      className={className}
+      aria-hidden="true"
+    >
+      <path d="M8 5.14v13.72a1 1 0 0 0 1.5.86l11.24-6.86a1 1 0 0 0 0-1.72L9.5 4.28A1 1 0 0 0 8 5.14z" />
+    </svg>
+  );
+}
