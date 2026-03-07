@@ -10,7 +10,7 @@
  * Narrow viewports: simple stacked image cards.
  */
 
-import React, { useRef, useMemo, useLayoutEffect, useEffect, useReducer } from "react";
+import React, { useRef, useMemo, useLayoutEffect, useReducer } from "react";
 import { motion, useMotionValue, useTransform, useMotionTemplate } from "framer-motion";
 import type { MotionValue } from "framer-motion";
 import { cn } from "@/lib/utils";
@@ -310,32 +310,28 @@ function ImageOverlay({
   );
 
   // Z-index
-  const initialOrigin = useMemo(() => {
+  const isRtl = useMemo(() => {
+    if (typeof document === "undefined") return false;
+    return document.documentElement.dir === "rtl" || document.dir === "rtl";
+  }, []);
+
+  const initialTransformOrigin = useMemo(() => {
     const rowStart = config.phases[0]?.gridPosition.rowStart ?? -1;
     const colStart = config.phases[0]?.gridPosition.columnStart ?? -1;
-    return rowStart === 2 && colStart === 5
-      ? "origin-bottom"
-      : "origin-bottom-right rtl:origin-bottom-left";
-  }, [config]);
+    const startsCentered = rowStart === 2 && colStart === 5;
 
-  const [transformOrigin, setTransformOrigin] = useReducer(
-    (prev: string, next: string) => (prev === next ? prev : next),
-    initialOrigin,
-  );
+    return startsCentered ? "50% 100%" : isRtl ? "0% 100%" : "100% 100%";
+  }, [config, isRtl]);
 
-  useEffect(() => {
-    const computeOrigin = (p: number) => {
-      if (!config.exitScaleRange) return initialOrigin;
-      const exitStart = config.exitScaleRange[0];
-      return p < exitStart ? initialOrigin : "origin-top-left rtl:origin-top-right";
-    };
+  const exitTransformOrigin = useMemo(() => {
+    return isRtl ? "100% 0%" : "0% 0%";
+  }, [isRtl]);
 
-    setTransformOrigin(computeOrigin(scrollYProgress.get()));
-
-    return scrollYProgress.on("change", (p) => {
-      setTransformOrigin(computeOrigin(p));
-    });
-  }, [scrollYProgress, initialOrigin, config.exitScaleRange]);
+  const transformOrigin = useTransform(scrollYProgress, (p) => {
+    if (!config.exitScaleRange) return initialTransformOrigin;
+    const exitStart = config.exitScaleRange[0];
+    return p < exitStart ? initialTransformOrigin : exitTransformOrigin;
+  });
 
   const translateTransform = useMotionTemplate`translateX(${x}px) translateY(${y}px)`;
   const positionScaleTransform = useMotionTemplate`scale(${scale})`;
@@ -372,9 +368,12 @@ function ImageOverlay({
           className={cn(
             "bg-background-400/20 relative size-full overflow-hidden will-change-transform",
             !isLoaded && "animate-pulse",
-            transformOrigin,
           )}
-          style={{ transform: innerScaleTransform, borderRadius: borderRadiusPx }}
+          style={{
+            transform: innerScaleTransform,
+            borderRadius: borderRadiusPx,
+            transformOrigin,
+          }}
         >
           {isLoaded && (
             <motion.img
