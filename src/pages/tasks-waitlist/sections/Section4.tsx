@@ -57,26 +57,18 @@ function WideCarousel({ scrollYProgress }: WideCarouselProps) {
   const isReducedMotion = useReducedMotion() === true;
   const fallback = useMotionValue(0);
   const rawProgress = scrollYProgress ?? fallback;
-
-  // Remap scroll progress: dead zone for first 6%, then linear to 1
   const continuousProgress = useTransform(rawProgress, [0, 0.06, 1], [0, 0, 1]);
-
-  // Reduced-motion: stepped progress that snaps between image positions
   const steppedProgress = useTransform(
     rawProgress,
     [0, 0.33, 0.33, 0.66, 0.66, 1],
     [0.2, 0.2, 0.55, 0.55, 0.85, 0.85],
   );
 
-  // Choose progress source based on reduced motion preference
   const progress = isReducedMotion ? steppedProgress : continuousProgress;
-
-  // Background opacity: constant 1 for narrow/reduced-motion, fade-in otherwise
   const staticOne = useMotionValue(1);
   const bgOpacityAnimated = useTransform(rawProgress, [0, 0.125], [0, 1]);
   const bgOpacity = isNarrow || isReducedMotion ? staticOne : bgOpacityAnimated;
 
-  // Grid reference elements for position measurement
   const containerRef = useRef<HTMLDivElement>(null);
   const topLeftRef = useRef<HTMLDivElement>(null);
   const centerRef = useRef<HTMLDivElement>(null);
@@ -108,7 +100,6 @@ function WideCarousel({ scrollYProgress }: WideCarouselProps) {
     }),
   ];
 
-  // Precompute image URLs based on theme
   const imageSrcs = useMemo(
     () => CAROUSEL_IMAGES.map((img) => (theme === "dark" ? img.srcDark : img.srcLight)),
     [theme],
@@ -272,8 +263,6 @@ function ImageOverlay({
   disableIntroOpacity = false,
 }: ImageOverlayProps) {
   const { x, y, scale } = transform;
-
-  // Inner scale (entry animation)
   const exitRange = config.exitScaleRange ?? [0, 0];
   const innerScaleInputs = config.exitScaleRange
     ? [config.innerScaleRange[0], config.innerScaleRange[1], exitRange[0], exitRange[1]]
@@ -297,8 +286,6 @@ function ImageOverlay({
   const imgOpacity = useTransform(scrollYProgress, opacityInputs, opacityOutputs, {
     ease: defaultEasing,
   });
-
-  // Image inner scale (zoom in effect that resolves to 1.15 max)
   const centerPhaseStart =
     config.phases.filter(
       (p) =>
@@ -316,7 +303,6 @@ function ImageOverlay({
   );
 
   // Z-index
-  // Transform origin: starts at initial position origin, changes for exit
   const initialOrigin = useMemo(() => {
     const rowStart = config.phases[0]?.gridPosition.rowStart ?? -1;
     const colStart = config.phases[0]?.gridPosition.columnStart ?? -1;
@@ -327,9 +313,6 @@ function ImageOverlay({
 
   const [transformOrigin, setTransformOrigin] = useState(initialOrigin);
 
-  // NOTE: useMotionValueEvent may invoke the callback synchronously during subscription
-  // in some cases, which can trigger "Cannot update a component while rendering a different component".
-  // Subscribe post-commit instead.
   useEffect(() => {
     const computeOrigin = (p: number) => {
       if (!config.exitScaleRange) return initialOrigin;
@@ -337,7 +320,6 @@ function ImageOverlay({
       return p < exitStart ? initialOrigin : "origin-top-left rtl:origin-top-right";
     };
 
-    // Sync once after mount
     setTransformOrigin((prev) => {
       const next = computeOrigin(scrollYProgress.get());
       return prev === next ? prev : next;
@@ -349,13 +331,11 @@ function ImageOverlay({
     });
   }, [scrollYProgress, initialOrigin, config.exitScaleRange]);
 
-  // Build transform strings via useMotionTemplate
   const translateTransform = useMotionTemplate`translateX(${x}px) translateY(${y}px)`;
   const positionScaleTransform = useMotionTemplate`scale(${scale})`;
   const innerScaleTransform = useMotionTemplate`scale(${innerScale})`;
   const imageScaleTransform = useMotionTemplate`scale(${imageScale})`;
 
-  // Dynamic border radius: IMAGE_BORDER_RADIUS / (positionScale * innerScale)
   const dynamicBorderRadius = useTransform([scale, innerScale], (latest: number[]) => {
     const s = latest[0] ?? 1;
     const is = latest[1] ?? 1;
@@ -463,7 +443,6 @@ function TextOverlay({
 }
 
 // Narrow carousel
-
 function NarrowCarousel() {
   const theme = useThemeValue();
 

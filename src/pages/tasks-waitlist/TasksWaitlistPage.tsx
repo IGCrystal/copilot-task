@@ -23,7 +23,6 @@ import { Section } from "./components/Section";
 import { SkipToContent } from "./components/SkipToContent";
 import { FloatingBar } from "./components/FloatingBar";
 
-// Lazy-load section components
 import { Section1 } from "./sections/Section1";
 import { Section2 } from "./sections/Section2";
 import { Section3 } from "./sections/Section3";
@@ -34,7 +33,6 @@ type SectionContentProps = {
   sectionRef?: React.RefObject<HTMLElement | null>;
 };
 
-// Map section IDs to their components
 const SECTION_COMPONENT_MAP: Record<string, React.ComponentType<SectionContentProps>> = {
   "section-1": Section1,
   "section-2": Section2,
@@ -49,8 +47,6 @@ export default function TasksWaitlistPage() {
   const wrapperRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
   const sectionRefsByIdRef = useRef<Record<string, React.RefObject<HTMLElement | null>>>({});
-
-  // Viewport measurement
   const [viewportSize, setViewportSize] = useState(() => ({
     width: typeof window !== "undefined" ? window.innerWidth : 0,
     height: typeof window !== "undefined" ? window.innerHeight : 0,
@@ -81,25 +77,21 @@ export default function TasksWaitlistPage() {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  // Initialize Lenis smooth scrolling
   const { lenis, scroll, progress, direction } = useLenisSetup({
     wrapper: wrapperRef,
     content: contentRef,
   });
 
-  // Track page view on mount
   useEffect(() => {
     trackPageView("tasksWaitlistPreview");
   }, []);
 
-  // Filter out hidden sections
   const visibleSections = useMemo(() => SECTION_CONFIGS.filter((config) => !config.hidden), []);
 
   const getSectionRef = (sectionId: string) => {
     const existing = sectionRefsByIdRef.current[sectionId];
     if (existing) return existing;
 
-    // Avoid React.createRef() in function components; a plain ref object works for our needs.
     const created = { current: null } as React.RefObject<HTMLElement | null>;
     sectionRefsByIdRef.current[sectionId] = created;
     return created;

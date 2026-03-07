@@ -33,8 +33,6 @@ export function Section1({ sectionRef: externalSectionRef }: Section1Props) {
   const { t } = useTranslation();
   const theme = useThemeValue();
   const sectionRef = externalSectionRef ?? contextSectionRef;
-
-  // Create own scroll progress: tracks from section top to when section exits viewport
   const { scrollYProgress: progress } = useScrollProgress({
     target: sectionRef,
     offset: ["start start", "end start"],

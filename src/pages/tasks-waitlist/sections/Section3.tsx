@@ -62,22 +62,18 @@ function Section3Content({ isNarrow, sectionRef }: Section3ContentProps) {
   const { t } = useTranslation();
   const { lenisScroll } = useLenisScrollContext();
   const shouldReduceMotion = useReducedMotion() === true;
-
-  // Entry animation (start end -> start start) - uses the SECTION element ref
   const { scrollYProgress: entryProgress } = useScrollProgress({
     target: sectionRef as React.RefObject<HTMLElement>,
     offset: ["start end", "start start"],
     lenisScroll,
   });
 
-  // Main scroll progress (start start -> end end) - for feature items
   const { scrollYProgress: mainProgress } = useScrollProgress({
     target: sectionRef as React.RefObject<HTMLElement>,
     offset: ["start start", "end end"],
     lenisScroll,
   });
 
-  // Exit animation (end end -> end start)
   const { scrollYProgress: exitProgress } = useScrollProgress({
     target: sectionRef as React.RefObject<HTMLElement>,
     offset: ["end end", "end start"],
@@ -85,14 +81,11 @@ function Section3Content({ isNarrow, sectionRef }: Section3ContentProps) {
   });
 
   const isNarrowOrReduced = isNarrow || shouldReduceMotion;
-
-  // Background div opacity (fades in as exit happens)
   const staticZero = useMotionValue(0);
   const staticOne = useMotionValue(1);
   const bgOpacityAnimated = useTransform(exitProgress, [0, 1], [0, 1]);
   const bgOpacity = isNarrowOrReduced ? staticZero : bgOpacityAnimated;
 
-  // Header animations
   const headerOpacityAnimated = useTransform(entryProgress, [0, 0.5], [0, 1], {
     ease: defaultEasing,
   });
@@ -102,8 +95,6 @@ function Section3Content({ isNarrow, sectionRef }: Section3ContentProps) {
     ease: defaultEasing,
   });
   const headerScale = isNarrowOrReduced ? staticOne : headerScaleAnimated;
-
-  // Content squircle opacity & y offset
   const contentOpacityAnimated = useTransform(entryProgress, [0, 0.5], [0, 1], {
     ease: defaultEasing,
   });
@@ -201,22 +192,17 @@ function FeatureItem({
 }: FeatureItemProps) {
   const itemRef = useRef<HTMLDivElement>(null);
   const { lenisScroll } = useLenisScrollContext();
-
-  // Per-item scroll progress for narrow mode
   const { scrollYProgress: itemProgress } = useScrollProgress({
     target: itemRef as React.RefObject<HTMLElement>,
     offset: ["end end", "start start"],
     lenisScroll,
   });
 
-  // In narrow mode, use per-item progress; in desktop, use section-level progress
   const progress = isNarrow ? itemProgress : sectionProgress;
-
   const segmentSize = FEATURE_SEGMENT_SIZE;
   const segmentStart = index * segmentSize;
   const segmentEnd = (index + 1) * segmentSize;
 
-  // Animation keyframes helper
   const getKeyframes = (offsets: {
     leadInOffset: number;
     entranceOffset: number;
@@ -242,7 +228,6 @@ function FeatureItem({
     leadOutOffset: 0.2,
   };
 
-  // Indicator circle scale
   const indicatorScale = useTransform(
     progress,
     getKeyframes(timingOffsets),
@@ -250,28 +235,22 @@ function FeatureItem({
     { ease: defaultEasing },
   );
 
-  // Indicator circle states
-  // State 1: empty border - visible initially, fades at peak
   const borderOpacity = useTransform(progress, getKeyframes(timingOffsets), [1, 1, 0, 0, 0], {
     ease: defaultEasing,
   });
 
-  // State 2: white + colored checkmark - active state
   const activeOpacity = useTransform(progress, getKeyframes(timingOffsets), [0, 0.8, 1, 1, 0], {
     ease: defaultEasing,
   });
 
-  // State 3: bg-300 + muted checkmark - done/past state
   const doneOpacity = useTransform(progress, getKeyframes(timingOffsets), [0, 0, 0, 0, 0.35], {
     ease: defaultEasing,
   });
 
-  // Content opacity
   const contentOpacity = useTransform(progress, getKeyframes(timingOffsets), [0.3, 1, 1, 1, 0.7], {
     ease: defaultEasing,
   });
 
-  // Description opacity (fades in slightly later)
   const descOpacity = useTransform(
     progress,
     getKeyframes({ ...timingOffsets, entranceOffset: 0.35 }),
@@ -279,15 +258,11 @@ function FeatureItem({
     { ease: defaultEasing },
   );
 
-  // Title scale
   const titleScale = useTransform(progress, getKeyframes(timingOffsets), [0.82, 1, 1, 1, 1], {
     ease: defaultEasing,
   });
 
-  // Vertical position
   const yPercent = useTransform(progress, [0, 1], [index * 100, (index - totalItems) * 100]);
-
-  // Always call hooks in a stable order; only conditionally *use* the value.
   const yValue = useMotionTemplate`${yPercent}%`;
 
   return (
@@ -375,7 +350,6 @@ function FeatureItem({
 }
 
 // Checkmark icons
-
 const CHECK_PATH =
   "M13.8327 7.17556C14.031 7.38364 14.053 7.70664 13.8988 7.94025L13.8327 8.02327L9.25894 12.8244C9.06071 13.0325 8.75301 13.0556 8.53046 12.8938L8.45138 12.8244L6.16725 10.4268C5.94425 10.1927 5.94425 9.81315 6.16725 9.57907C6.36547 9.37099 6.67317 9.34787 6.89573 9.50971L6.97481 9.57907L8.85516 11.5532L13.0252 7.17556C13.2482 6.94148 13.6097 6.94148 13.8327 7.17556Z";
 
@@ -392,10 +366,6 @@ function CheckCircleMono({ className }: { className?: string }) {
 }
 
 function CheckCircleColorLight({ className }: { className?: string }) {
-  // NOTE: React 18 useId() includes ':' characters (e.g. ":r0:").
-  // Some browsers / SVG url(#id) resolvers are picky about special chars,
-  // which can cause gradients/clipPaths to fail silently.
-  // The original implementation used a random [a-z0-9] id, so we normalize here.
   const reactId = useId();
   const id = `check-circle-color-light-${reactId.replace(/:/g, "")}`;
   return (

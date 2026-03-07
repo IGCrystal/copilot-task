@@ -28,7 +28,6 @@ import { useOverflowDetection } from "../hooks/useOverflowDetection";
 import { useScrollProgress } from "../hooks/useScrollProgress";
 import type { RolodexLayout, RolodexItemWithStagger } from "../types";
 
-// Content text classes shared between visible and hidden reference divs
 const CONTENT_TEXT_CLASSES = cn(
   "!text-[52px] !leading-[52px] text-4xl-medium",
   "lg:!text-[80px] lg:!leading-[80px]",
@@ -56,23 +55,15 @@ export function Section2({ sectionRef: externalSectionRef }: Section2Props) {
   const contentRef = useRef<HTMLDivElement>(null);
   const squircleRef = useRef<HTMLDivElement>(null);
   const refContentRef = useRef<HTMLDivElement>(null);
-
-  // Narrow auto-play animation
   const autoProgress = useRolodexAnimation({ paused: isPaused });
-
-  // Main animation driver
   const sectionProgress = scrollYProgress ?? lenisScroll;
   const progress = isNarrow ? autoProgress : sectionProgress;
-
-  // Exit scroll: tracks when section end passes through viewport
   const exitOffset = useMemo<[string, string]>(() => ["end start", "end end"], []);
   const { scrollYProgress: exitProgress } = useScrollProgress({
     target: sectionRef,
     offset: exitOffset,
     lenisScroll,
   });
-
-  // Layout detection
   const isOverflowing = useOverflowDetection({
     containerRef,
     childRef: refContentRef,
@@ -81,8 +72,6 @@ export function Section2({ sectionRef: externalSectionRef }: Section2Props) {
   const layout: RolodexLayout = isOverflowing ? "5-line" : "3-line";
   const items = useMemo(() => prepareItems(layout), [layout]);
   const referenceItems = useMemo(() => prepareItems("3-line"), []);
-
-  // Row groups
   const rowCount = layout === "5-line" ? 5 : 3;
   const rows = useMemo(
     () => Array.from({ length: rowCount }, (_, i) => items.filter((item) => item.row === i)),
@@ -93,7 +82,6 @@ export function Section2({ sectionRef: externalSectionRef }: Section2Props) {
     [referenceItems],
   );
 
-  // --- Content animations ---
   const useStatic = isNarrow || shouldReduceMotion;
 
   const scaleAnim = useTransform(
@@ -129,7 +117,6 @@ export function Section2({ sectionRef: externalSectionRef }: Section2Props) {
     { clamp: true },
   );
 
-  // Static values for narrow / reduced-motion
   const staticOne = useMotionValue(1);
   const staticZero = useMotionValue(0);
   const staticBlur = useMotionValue("blur(0px)");
@@ -175,7 +162,6 @@ export function Section2({ sectionRef: externalSectionRef }: Section2Props) {
     };
   }, []);
 
-  // Exit y-offset: content lifts up as user scrolls past
   const [centerOffset, setCenterOffset] = useState(0);
 
   useLayoutEffect(() => {
@@ -202,7 +188,6 @@ export function Section2({ sectionRef: externalSectionRef }: Section2Props) {
     };
   }, [bgScale]);
 
-  // Background squircle & dark layer transitions
   const bgSquircleScaleAnim = useTransform(
     sectionProgress,
     [K.HOLD_3_END, K.SCALE_START],
@@ -370,8 +355,6 @@ export function Section2({ sectionRef: externalSectionRef }: Section2Props) {
 }
 
 // Helpers
-
-/** Enrich items with diagonal stagger values */
 function prepareItems(layout: RolodexLayout): RolodexItemWithStagger[] {
   const rawItems = getRolodexItems(layout);
   const maxDiagonal = getMaxDiagonalIndex(rawItems);
@@ -383,7 +366,6 @@ function prepareItems(layout: RolodexLayout): RolodexItemWithStagger[] {
 }
 
 // Inline icons
-
 function PauseIcon({ className }: { className?: string }) {
   return (
     <svg
