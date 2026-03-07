@@ -138,7 +138,7 @@ export const Section = forwardRef<HTMLElement, SectionProps>(
     );
 
     return (
-      <SectionContext.Provider value={contextValue}>
+      <SectionContext value={contextValue}>
         <section
           ref={internalRef}
           aria-label={ariaLabelText}
@@ -157,7 +157,7 @@ export const Section = forwardRef<HTMLElement, SectionProps>(
         >
           {children}
         </section>
-      </SectionContext.Provider>
+      </SectionContext>
     );
   },
 );

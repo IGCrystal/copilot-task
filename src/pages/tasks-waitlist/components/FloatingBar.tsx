@@ -28,7 +28,6 @@ export function FloatingBar({ className }: { className?: string }) {
 
   // Progress values are floats; treat very small values as zero to avoid flicker.
   const EPS = 0.001;
-  const isZero = (v: number) => Math.abs(v) <= EPS;
   const isPositive = (v: number) => v > EPS;
   const isNearlyOne = (v: number) => v >= 1 - EPS;
 
@@ -41,9 +40,9 @@ export function FloatingBar({ className }: { className?: string }) {
 
   useEffect(() => {
     const s2 = document.querySelector('[data-section-id="section-2"]');
-    setTimeout(() => setSection2El(s2), 0);
     const se = document.querySelector('[data-section-id="section-end"]');
-    setTimeout(() => setSectionEndEl(se), 0);
+    setSection2El(s2);
+    setSectionEndEl(se);
   }, []);
 
   // Track when section-2 end passes viewport
@@ -72,7 +71,6 @@ export function FloatingBar({ className }: { className?: string }) {
       setVisible(isPositive(s2) && !isNearlyOne(end));
 
       if (debug) {
-        // eslint-disable-next-line no-console
         console.log("[FloatingBar]", {
           section2Found: Boolean(section2El),
           sectionEndFound: Boolean(sectionEndEl),

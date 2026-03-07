@@ -93,6 +93,15 @@ export function RolodexImage({
   }
 
   // ---- Wide/scroll-driven mode: vertical slide ----
+  const imageEntries = (() => {
+    const seen = new Map<string, number>();
+    return images.map((src) => {
+      const n = seen.get(src) ?? 0;
+      seen.set(src, n + 1);
+      return { src, key: `${src}__${n}` };
+    });
+  })();
+
   return (
     <span className="inline-block">
       <motion.div
@@ -107,9 +116,9 @@ export function RolodexImage({
               y: yOffset,
             }}
           >
-            {images.map((src, i) => (
+            {imageEntries.map(({ src, key }, i) => (
               <img
-                key={i}
+                key={key}
                 src={src}
                 alt={`Rolodex image ${i + 1}`}
                 className="size-full shrink-0 transform-gpu object-cover"

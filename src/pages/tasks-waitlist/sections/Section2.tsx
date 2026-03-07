@@ -40,7 +40,7 @@ const CONTENT_TEXT_CLASSES = cn(
 // ===================== Main Component =====================
 
 interface Section2Props {
-  sectionRef?: React.RefObject<HTMLElement>;
+  sectionRef?: React.RefObject<HTMLElement | null>;
 }
 
 export function Section2({ sectionRef: externalSectionRef }: Section2Props) {
@@ -48,7 +48,7 @@ export function Section2({ sectionRef: externalSectionRef }: Section2Props) {
   const { isNarrow, lenisScroll } = useLenisScrollContext();
   const shouldReduceMotion = useReducedMotion() === true;
   const { t } = useTranslation();
-  const sectionRef = externalSectionRef ?? (contextSectionRef as React.RefObject<HTMLElement>);
+  const sectionRef = externalSectionRef ?? contextSectionRef;
 
   const [isPaused, setIsPaused] = useState(() => shouldReduceMotion);
 
@@ -298,8 +298,8 @@ export function Section2({ sectionRef: externalSectionRef }: Section2Props) {
           </motion.div>
 
           {/* Row-based items */}
-          {rows.map((row, rowIdx) => (
-            <div key={rowIdx} className="mb-2">
+          {rows.map((row) => (
+            <div key={row.map((item) => item.id).join("|")} className="mb-2">
               {row.map((item, itemIdx) => (
                 <span key={item.id}>
                   <RolodexItem
@@ -348,7 +348,7 @@ export function Section2({ sectionRef: externalSectionRef }: Section2Props) {
       >
         <div ref={refContentRef} className={cn("max-w-full p-6 py-14", CONTENT_TEXT_CLASSES)}>
           {referenceRows.map((row, rowIdx) => (
-            <div key={rowIdx} className="mb-2">
+            <div key={row.map((item) => item.id).join("|")} className="mb-2">
               {row.map((item, itemIdx) => (
                 <span key={item.id}>
                   <span className="inline-block">

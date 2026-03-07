@@ -8,7 +8,7 @@ import prettier from "eslint-config-prettier";
 const reactRefreshRecommendedRules =
   reactRefresh.configs?.flat?.recommended?.rules ?? reactRefresh.configs?.recommended?.rules ?? {};
 
-export default tseslint.config(
+export default [
   {
     ignores: [
       "dist/**",
@@ -98,4 +98,4 @@ export default tseslint.config(
 
   // Disable formatting-related rules that conflict with Prettier.
   prettier,
-);
+];

@@ -6,10 +6,11 @@
  * can access section-level scroll progress.
  */
 
-import { createContext, useContext, createRef } from "react";
+import { createContext, use } from "react";
+import type { RefObject } from "react";
 import type { SectionContextValue } from "../types";
 
-const defaultRef = createRef<HTMLElement>();
+const defaultRef: RefObject<HTMLElement | null> = { current: null };
 
 export const SectionContext = createContext<SectionContextValue>({
   scrollYProgress: null,
@@ -21,5 +22,5 @@ export const SectionContext = createContext<SectionContextValue>({
  * Access the scroll progress and sticky state of the enclosing section.
  */
 export function useSectionContext(): SectionContextValue {
-  return useContext(SectionContext);
+  return use(SectionContext);
 }

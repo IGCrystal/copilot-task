@@ -161,7 +161,7 @@ function Section3Content({ isNarrow, sectionRef }: Section3ContentProps) {
           <div className={cn("flex size-full flex-col items-center", isNarrow && "pt-16")}>
             {FEATURE_ITEMS.map((feature, index) => (
               <FeatureItem
-                key={index}
+                key={feature.titleKey}
                 feature={feature}
                 index={index}
                 totalItems={FEATURE_ITEMS.length}
@@ -361,7 +361,11 @@ function FeatureItem({
           <div className="text-base-dense sm:line-clamp-2">{t(feature.descriptionKey)}</div>
           <div className="flex flex-wrap gap-2">
             {feature.actionItems.map((action, ai) => (
-              <ActionBadge key={ai} labelKey={action.labelKey} icon={action.icon} />
+              <ActionBadge
+                key={`${action.labelKey}::${action.icon ?? ""}`}
+                labelKey={action.labelKey}
+                icon={action.icon}
+              />
             ))}
           </div>
         </motion.div>

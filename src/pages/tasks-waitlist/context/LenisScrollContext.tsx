@@ -5,7 +5,7 @@
  * progress, direction) and viewport dimensions to all child components.
  */
 
-import React, { createContext, useContext, useMemo } from "react";
+import React, { createContext, use, useMemo } from "react";
 import type { MotionValue } from "framer-motion";
 import type { LenisScrollContextValue, LenisInstance } from "../types";
 
@@ -16,7 +16,7 @@ const LenisScrollContext = createContext<LenisScrollContextValue | null>(null);
  * @throws Error if used outside of provider
  */
 export function useLenisScrollContext(): LenisScrollContextValue {
-  const context = useContext(LenisScrollContext);
+  const context = use(LenisScrollContext);
   if (!context) {
     throw new Error("useLenisScrollContext must be used within a LenisScrollProvider");
   }

@@ -23,7 +23,7 @@ import { ScrollIndicator } from "../components/ScrollIndicator";
 import { ShimmerText } from "../components/ShimmerText";
 
 interface Section1Props {
-  sectionRef?: React.RefObject<HTMLElement>;
+  sectionRef?: React.RefObject<HTMLElement | null>;
 }
 
 export function Section1({ sectionRef: externalSectionRef }: Section1Props) {
@@ -32,7 +32,7 @@ export function Section1({ sectionRef: externalSectionRef }: Section1Props) {
   const shouldReduceMotion = useReducedMotion() === true;
   const { t } = useTranslation();
   const theme = useThemeValue();
-  const sectionRef = externalSectionRef ?? (contextSectionRef as React.RefObject<HTMLElement>);
+  const sectionRef = externalSectionRef ?? contextSectionRef;
 
   // Create own scroll progress: tracks from section top to when section exits viewport
   const { scrollYProgress: progress } = useScrollProgress({

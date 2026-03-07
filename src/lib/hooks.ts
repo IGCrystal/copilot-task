@@ -2,7 +2,7 @@
  * Mock: Common hooks.
  */
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 /**
  * Returns true if the user prefers reduced motion.

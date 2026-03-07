@@ -27,7 +27,7 @@ export function SkipToContent() {
 
   useEffect(() => {
     const el = document.querySelector<HTMLElement>('[data-section-id="section-1"]');
-    setTimeout(() => setSection1Element(el), 0);
+    setSection1Element(el);
   }, []);
 
   // Track whether we're still in Section 1

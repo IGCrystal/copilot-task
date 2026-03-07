@@ -13,7 +13,6 @@
  */
 
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import { cn } from "@/lib/utils";
 import { useMediaQuery } from "@/lib/hooks";
 import { trackPageView } from "@/lib/telemetry";
 import { BREAKPOINT } from "./constants";
@@ -31,8 +30,12 @@ import { Section3 } from "./sections/Section3";
 import { Section4 } from "./sections/Section4";
 import { SectionEnd } from "./sections/SectionEnd";
 
+type SectionContentProps = {
+  sectionRef?: React.RefObject<HTMLElement | null>;
+};
+
 // Map section IDs to their components
-const SECTION_COMPONENT_MAP: Record<string, React.ComponentType> = {
+const SECTION_COMPONENT_MAP: Record<string, React.ComponentType<SectionContentProps>> = {
   "section-1": Section1,
   "section-2": Section2,
   "section-3": Section3,
@@ -45,7 +48,7 @@ const SECTION_COMPONENT_MAP: Record<string, React.ComponentType> = {
 export default function TasksWaitlistPage() {
   const wrapperRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
-  const sectionRefs = useRef<Record<string, React.RefObject<HTMLElement | null>>>({});
+  const sectionRefsByIdRef = useRef<Record<string, React.RefObject<HTMLElement | null>>>({});
 
   // Viewport measurement
   const [viewportSize, setViewportSize] = useState(() => ({
@@ -93,10 +96,13 @@ export default function TasksWaitlistPage() {
   const visibleSections = useMemo(() => SECTION_CONFIGS.filter((config) => !config.hidden), []);
 
   const getSectionRef = (sectionId: string) => {
-    if (!sectionRefs.current[sectionId]) {
-      sectionRefs.current[sectionId] = React.createRef<HTMLElement>();
-    }
-    return sectionRefs.current[sectionId];
+    const existing = sectionRefsByIdRef.current[sectionId];
+    if (existing) return existing;
+
+    // Avoid React.createRef() in function components; a plain ref object works for our needs.
+    const created = { current: null } as React.RefObject<HTMLElement | null>;
+    sectionRefsByIdRef.current[sectionId] = created;
+    return created;
   };
 
   return (
@@ -123,7 +129,7 @@ export default function TasksWaitlistPage() {
             <SkipToContent />
 
             {visibleSections.map((config) => {
-              const SectionContent = SECTION_COMPONENT_MAP[config.id] as React.ComponentType<any>;
+              const SectionContent = SECTION_COMPONENT_MAP[config.id];
               if (!SectionContent) return null;
 
               const sectionRef = getSectionRef(config.id);

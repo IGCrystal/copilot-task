@@ -3,20 +3,23 @@
  * Simulates the internal Microsoft fetch utility with schema validation.
  */
 
-export async function fetchApi(
+export type Schema<T> = {
+  parse: (data: unknown) => T;
+};
+
+export async function fetchApi<T>(
   url: string,
-  _schema: any,
-  options?: { options?: RequestInit; analytics?: any },
-): Promise<{ data: any }> {
+  schema: Schema<T>,
+  options?: { options?: RequestInit; analytics?: unknown },
+): Promise<{ data: T }> {
   const method = options?.options?.method ?? "GET";
   console.log(`[mock fetchApi] ${method} ${url}`);
 
   // Simulate network delay
   await new Promise((r) => setTimeout(r, 300));
 
-  if (method === "POST") {
-    return { data: { status: "waitlisted" } };
-  }
+  const mockData: unknown =
+    method === "POST" ? { status: "waitlisted" } : { status: "not_joined" };
 
-  return { data: { status: "not_joined" } };
+  return { data: schema.parse(mockData) };
 }

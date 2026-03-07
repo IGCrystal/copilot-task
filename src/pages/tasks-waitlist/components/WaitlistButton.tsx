@@ -85,12 +85,12 @@ export function WaitlistButton({ placement = "home" }: WaitlistButtonProps) {
 
   const [showingConfirmation, setShowingConfirmation] = useState(false);
   const confirmationTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const wasPending = useRef(false);
-  const hasAttemptedResume = useRef(false);
+  const wasPendingRef = useRef(false);
+  const hasAttemptedResumeRef = useRef(false);
 
   // Resume pending join after sign-in redirect
   useEffect(() => {
-    if (!isAuthenticated || isLoading || hasAttemptedResume.current) return;
+    if (!isAuthenticated || isLoading || hasAttemptedResumeRef.current) return;
 
     const pendingTimestamp = getSessionStorageValue("pendingTaskWaitlistJoin");
     clearSessionStorageValue("pendingTaskWaitlistJoin");
@@ -104,7 +104,7 @@ export function WaitlistButton({ placement = "home" }: WaitlistButtonProps) {
       return;
     }
 
-    hasAttemptedResume.current = true;
+    hasAttemptedResumeRef.current = true;
 
     const timer = setTimeout(() => {
       setShowingConfirmation(true);
@@ -118,12 +118,12 @@ export function WaitlistButton({ placement = "home" }: WaitlistButtonProps) {
   // Handle confirmation display after join completes
   useEffect(() => {
     if (isPending) {
-      wasPending.current = true;
+      wasPendingRef.current = true;
       return;
     }
 
-    if (!wasPending.current) return;
-    wasPending.current = false;
+    if (!wasPendingRef.current) return;
+    wasPendingRef.current = false;
 
     const hideDelay = isError ? 0 : JOIN_CONFIRMATION_DURATION_MS;
 
