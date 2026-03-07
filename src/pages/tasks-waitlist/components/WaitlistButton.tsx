@@ -88,7 +88,6 @@ export function WaitlistButton({ placement = "home" }: WaitlistButtonProps) {
   const wasPendingRef = useRef(false);
   const hasAttemptedResumeRef = useRef(false);
 
-  // Resume pending join after sign-in redirect
   useEffect(() => {
     if (!isAuthenticated || isLoading || hasAttemptedResumeRef.current) return;
 
@@ -115,7 +114,6 @@ export function WaitlistButton({ placement = "home" }: WaitlistButtonProps) {
     return () => clearTimeout(timer);
   }, [isAuthenticated, isLoading, status, join]);
 
-  // Handle confirmation display after join completes
   useEffect(() => {
     if (isPending) {
       wasPendingRef.current = true;
@@ -138,7 +136,6 @@ export function WaitlistButton({ placement = "home" }: WaitlistButtonProps) {
     };
   }, [isPending, isError]);
 
-  // Determine current button state
   const buttonState: ButtonState = isAuthenticated
     ? getButtonState(status, showingConfirmation)
     : "signIn";
@@ -152,7 +149,6 @@ export function WaitlistButton({ placement = "home" }: WaitlistButtonProps) {
     trackWaitlistJoin(placement);
 
     if (!isAuthenticated) {
-      // Store timestamp so we can resume after sign-in
       setSessionStorageValue("pendingTaskWaitlistJoin", Date.now());
       setRedirectPath({ to: "/tasks/preview" });
       signIn();

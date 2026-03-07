@@ -61,8 +61,6 @@ export function Section({
   const { lenisScroll, isNarrow } = useLenisScrollContext();
   const shouldReduceMotion = useReducedMotion() === true;
   const { t } = useTranslation();
-
-  // Find section config for overrides
   const sectionConfig = sectionId ? SECTION_CONFIGS.find((s) => s.id === sectionId) : undefined;
 
   const narrowOverrides = isNarrow ? sectionConfig?.narrowOverrides : undefined;
@@ -70,7 +68,6 @@ export function Section({
     ? sectionConfig?.reducedMotionOverrides
     : undefined;
 
-  // Compute effective height multiplier with overrides
   const effectiveMultiplier =
     reducedMotionOverrides?.heightMultiplier ??
     narrowOverrides?.heightMultiplier ??
@@ -80,7 +77,6 @@ export function Section({
   const effectiveOverlap = narrowOverrides?.overlapPrevious ?? overlapPrevious;
   const stickyEnabled = narrowOverrides?.sticky ?? true;
 
-  // Calculate previous section overlap height
   let previousSectionMultiplier = 1;
   let totalMultiplier = effectiveMultiplier;
 
@@ -99,10 +95,8 @@ export function Section({
     totalMultiplier = effectiveMultiplier;
   }
 
-  // Determine if this section has zero height (non-scrolling)
   const isZeroHeight = effectiveMultiplier === 0;
 
-  // Calculate CSS min-height
   let minHeightStyle: string | undefined;
   if (!isZeroHeight && totalMultiplier !== 1) {
     minHeightStyle = `calc((100dvh - ${HEADER_HEIGHT_OFFSET}px) * ${totalMultiplier})`;
@@ -110,7 +104,6 @@ export function Section({
   const minHeightClass =
     !isZeroHeight && totalMultiplier === 1 ? "min-h-[100dvh] md:min-h-lenis-wrapper" : undefined;
 
-  // Negative margin for overlap
   const marginTopStyle = effectiveOverlap
     ? `calc((100dvh - ${HEADER_HEIGHT_OFFSET}px) * -${previousSectionMultiplier})`
     : undefined;
@@ -119,7 +112,6 @@ export function Section({
   const ariaLabel = sectionConfig?.ariaLabel;
   const ariaLabelText = typeof ariaLabel === "string" ? String(t(ariaLabel)) : undefined;
 
-  // Compute scroll tracking offset strings
   const overlapFraction = effectiveOverlap ? previousSectionMultiplier / totalMultiplier : 0;
   const [startEdge, endEdge] = scrollTrackingEdge;
 

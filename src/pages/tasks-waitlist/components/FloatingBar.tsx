@@ -26,12 +26,9 @@ export function FloatingBar({ className }: { className?: string }) {
     return new URLSearchParams(window.location.search).get("debugFloatingBar") === "1";
   }, []);
 
-  // Progress values are floats; treat very small values as zero to avoid flicker.
   const EPS = 0.001;
   const isPositive = (v: number) => v > EPS;
   const isNearlyOne = (v: number) => v >= 1 - EPS;
-
-  // Find section-2 and section-end DOM elements
   const [section2El, setSection2El] = useReducer(
     (_: Element | null, next: Element | null) => next,
     null,
@@ -51,29 +48,24 @@ export function FloatingBar({ className }: { className?: string }) {
     setSectionEndEl(se);
   }, []);
 
-  // Track when section-2 end passes viewport
   const { scrollYProgress: s2Progress } = useScrollProgress({
     target: section2Ref as React.RefObject<HTMLElement>,
     offset: ["end end", "end center"],
     lenisScroll,
   });
 
-  // Track when section-end is in view
   const { scrollYProgress: endProgress } = useScrollProgress({
     target: sectionEndRef as React.RefObject<HTMLElement>,
     offset: ["center end", "center start"],
     lenisScroll,
   });
 
-  // Show when section-2 has scrolled past and section-end not yet in view
   const [visible, setVisible] = useReducer((_: boolean, next: boolean) => next, false);
 
   useEffect(() => {
     const update = () => {
       const s2 = s2Progress.get();
       const end = endProgress.get();
-      // Keep the bar mounted until SectionEnd is fully in view.
-      // SectionEnd should visually cover the bar (higher z-index), then we unmount.
       setVisible(isPositive(s2) && !isNearlyOne(end));
 
       if (debug) {
@@ -87,7 +79,6 @@ export function FloatingBar({ className }: { className?: string }) {
       }
     };
 
-    // Run once so we don't rely on the first change event.
     update();
 
     const unsub1 = s2Progress.on("change", update);

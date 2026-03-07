@@ -20,8 +20,6 @@ export function SkipToContent() {
   const { t } = useTranslation();
   const { lenisScroll, lenis, isNarrow } = useLenisScrollContext();
   const shouldReduceMotion = useReducedMotion();
-
-  // Get the Section 1 DOM element for scroll tracking
   const [section1Element, setSection1Element] = useReducer(
     (_: HTMLElement | null, next: HTMLElement | null) => next,
     null,
@@ -33,7 +31,6 @@ export function SkipToContent() {
     setSection1Element(el);
   }, []);
 
-  // Track whether we're still in Section 1
   const { scrollYProgress } = useScrollProgress({
     target: section1Ref,
     offset: ["start start", "end start"],
@@ -45,7 +42,6 @@ export function SkipToContent() {
     setIsVisible(progress < 1);
   });
 
-  /** Scroll to Section 2 when the skip link is activated */
   function scrollToContent() {
     const section2 = document.querySelector<HTMLElement>('[data-section-id="section-2"]');
     if (!section2) return;

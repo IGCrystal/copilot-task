@@ -5,7 +5,6 @@
  * to indicate the user should scroll down. Respects reduced motion.
  */
 
-import React from "react";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { useReducedMotion } from "@/lib/hooks";

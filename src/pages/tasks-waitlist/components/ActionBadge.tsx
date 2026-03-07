@@ -22,7 +22,6 @@ import {
   SendEmailIcon,
 } from "@/lib/icons";
 
-// Map icon name strings to actual icon components
 const ICON_MAP: Record<string, React.ComponentType<{ className?: string }>> = {
   arrowRefresh: ArrowRefreshIcon,
   edge: EdgeIcon,
@@ -35,7 +34,7 @@ const ICON_MAP: Record<string, React.ComponentType<{ className?: string }>> = {
   search: SearchIcon,
   schedule: CalendarIcon,
   sendEmail: SendEmailIcon,
-  // Artifact icons (slides, documents, sheets) use the same generic icons
+
   artifactSlides: GoogleCalendarIcon,
   artifactDocuments: EmailIcon,
   artifactSheets: SearchIcon,

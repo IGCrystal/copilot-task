@@ -11,7 +11,6 @@
  * during the scroll animation. Uses [0, 180] / [180, 360] rotation ranges.
  */
 
-import React from "react";
 import { motion, useTransform } from "framer-motion";
 import type { MotionValue } from "framer-motion";
 import { SCROLL_KEYFRAMES as K, STAGGER_CONFIG } from "../constants";
@@ -45,7 +44,6 @@ export function RolodexItem({
   const diag = diagonalStagger ?? item.diagonalStagger;
   const staggerOffset = diag * STAGGER_CONFIG.maxStagger;
 
-  // ---- Static text ----
   if (type === "text" && !animate) {
     return (
       <span className="inline-block" style={{ transform: "translateZ(0)" }}>
@@ -54,7 +52,6 @@ export function RolodexItem({
     );
   }
 
-  // ---- Image item ----
   if (type === "image") {
     return (
       <RolodexImage
@@ -73,7 +70,6 @@ export function RolodexItem({
     );
   }
 
-  // ---- Narrow mode: direct text without scroll animation ----
   if (isNarrow && contentIndex !== undefined) {
     const contents = [content1, content2, content3];
     return (
@@ -89,7 +85,6 @@ export function RolodexItem({
     );
   }
 
-  // ---- Wide mode: scroll-driven 3D card flip ----
   return (
     <AnimatedFlipText
       content1={content1}
@@ -107,7 +102,6 @@ export function RolodexItem({
 }
 
 // ===================== Animated 3D Card Flip =====================
-
 interface AnimatedFlipTextProps {
   content1: string;
   content2: string;
@@ -133,7 +127,6 @@ function AnimatedFlipText({
   rolodex2Start,
   rolodex2End,
 }: AnimatedFlipTextProps) {
-  // Stagger-adjusted keyframes
   const r1Start = (rolodex1Start ?? K.ROLODEX_1_START) + staggerOffset;
   const r1End = (rolodex1End ?? K.ROLODEX_1_END) + staggerOffset;
   const r2Start = (rolodex2Start ?? K.ROLODEX_2_START) + staggerOffset;
@@ -141,27 +134,18 @@ function AnimatedFlipText({
   const resetStart = K.RESET_START + staggerOffset;
   const resetEnd = K.RESET_END + staggerOffset;
 
-  // Transition 1: content1 -> content2 (rotate 0 -> 180)
   const rotate1 = useTransform(scrollProgress, [r1Start, r1End], [0, 180], {
     clamp: true,
   });
 
-  // Transition 2: content2 -> content3 (rotate 180 -> 360)
   const rotate2 = useTransform(scrollProgress, [r2Start, r2End], [180, 360], {
     clamp: true,
   });
 
-  // Reset transition (narrow only): content3 -> content1 (rotate 0 -> 180)
   const rotateReset = useTransform(scrollProgress, [resetStart, resetEnd], [0, 180], {
     clamp: true,
   });
 
-  // Visibility state machine:
-  // 1 = showing content1 (pre-flip or during flip1)
-  // 2 = showing content2 static (between flips)
-  // 3 = showing content2->3 transition
-  // 4 = showing content3 static
-  // 5 = showing content3->1 reset (narrow only)
   const visState = useTransform(scrollProgress, (p: number) => {
     if (p < r1End) return 1;
     if (p < r2Start) return 2;

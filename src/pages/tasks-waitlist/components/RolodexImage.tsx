@@ -46,7 +46,6 @@ export function RolodexImage({
   const resetStart = K.RESET_START + staggerOffset;
   const resetEnd = K.RESET_END + staggerOffset;
 
-  // For narrow mode, add a 4th image (content1 again) for seamless loop
   const images = isNarrow
     ? [content1, content2, content3, content1]
     : [content1, content2, content3];
@@ -57,7 +56,6 @@ export function RolodexImage({
     ...(isNarrow ? [{ images: [2, 3], range: [resetStart, resetEnd] }] : []),
   ];
 
-  // Compute scroll keyframes and y-offset percentage values
   const scrollKeyframes: number[] = [0];
   const yValues: string[] = ["0%"];
   for (const t of transitions) {
@@ -73,7 +71,6 @@ export function RolodexImage({
     ease: defaultEasing,
   });
 
-  // ---- Narrow mode with contentIndex: show current image directly ----
   if (isNarrow && contentIndex !== undefined) {
     const allImages = [content1, content2, content3];
     return (
@@ -92,7 +89,6 @@ export function RolodexImage({
     );
   }
 
-  // ---- Wide/scroll-driven mode: vertical slide ----
   const imageEntries = (() => {
     const seen = new Map<string, number>();
     return images.map((src) => {
