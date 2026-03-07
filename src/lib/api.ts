@@ -18,8 +18,7 @@ export async function fetchApi<T>(
   // Simulate network delay
   await new Promise((r) => setTimeout(r, 300));
 
-  const mockData: unknown =
-    method === "POST" ? { status: "waitlisted" } : { status: "not_joined" };
+  const mockData: unknown = method === "POST" ? { status: "waitlisted" } : { status: "not_joined" };
 
   return { data: schema.parse(mockData) };
 }

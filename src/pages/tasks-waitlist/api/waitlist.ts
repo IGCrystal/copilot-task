@@ -8,11 +8,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { fetchApi } from "@/lib/api";
 import { useIsAuthenticated } from "@/lib/auth";
-import {
-  joinResponseSchema,
-  statusResponseSchema,
-  type WaitlistStatus,
-} from "@/lib/schemas";
+import { joinResponseSchema, statusResponseSchema, type WaitlistStatus } from "@/lib/schemas";
 import { WAITLIST_PROGRAM } from "../constants";
 
 // ===================== API Functions =====================

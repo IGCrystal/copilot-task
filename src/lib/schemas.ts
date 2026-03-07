@@ -9,17 +9,17 @@ import type { Schema } from "./api";
 export type WaitlistStatus = "not_joined" | "waitlisted" | "enrolled";
 
 export interface JoinWaitlistResponse {
-	status: Exclude<WaitlistStatus, "not_joined">;
+  status: Exclude<WaitlistStatus, "not_joined">;
 }
 
 export interface WaitlistStatusResponse {
-	status: WaitlistStatus;
+  status: WaitlistStatus;
 }
 
 export const joinResponseSchema: Schema<JoinWaitlistResponse> = {
-	parse: (d: unknown) => d as JoinWaitlistResponse,
+  parse: (d: unknown) => d as JoinWaitlistResponse,
 };
 
 export const statusResponseSchema: Schema<WaitlistStatusResponse> = {
-	parse: (d: unknown) => d as WaitlistStatusResponse,
+  parse: (d: unknown) => d as WaitlistStatusResponse,
 };

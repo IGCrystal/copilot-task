@@ -20,9 +20,7 @@ export default {
         stroke: Object.fromEntries(
           [250, 300, 450, 900].map((n) => [n, `rgb(var(--color-stroke-${n}))`]),
         ),
-        accent: Object.fromEntries(
-          [100].map((n) => [n, `rgb(var(--color-accent-${n}))`]),
-        ),
+        accent: Object.fromEntries([100].map((n) => [n, `rgb(var(--color-accent-${n}))`])),
       },
       fontFamily: {
         sans: [
