@@ -62,7 +62,6 @@ export const SECTION_CONFIGS: SectionConfig[] = [
     id: "section-end",
     componentPath: "./sections/section-end",
     heightMultiplier: 0,
-    // Must be above FloatingBar (z-50) so the footer section can cover it.
     zIndex: 60,
     ariaLabel: "tasks.waitList.sectionEnd.ariaLabel",
     narrowOverrides: { heightMultiplier: 0, sticky: false },
@@ -82,7 +81,6 @@ export function getEffectiveHeightMultiplier(sectionIndex: number): number {
     return multiplier;
   }
 
-  // Walk backwards to find the nearest visible previous section
   for (let i = sectionIndex - 1; i >= 0; i--) {
     if (!SECTION_CONFIGS[i]?.hidden) {
       const previousMultiplier = getEffectiveHeightMultiplier(i);

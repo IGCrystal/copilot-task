@@ -12,7 +12,6 @@ import type { MotionValue } from "framer-motion";
 import { SCROLL_KEYFRAMES as K, STAGGER_CONFIG, ANIMATION_TIMING } from "../constants";
 
 interface UseRolodexAnimationOptions {
-  /** When true, the animation loop is paused */
   paused?: boolean;
 }
 
@@ -25,17 +24,12 @@ export function useRolodexAnimation(options: UseRolodexAnimationOptions = {}): M
     if (paused) return;
 
     const { holdDurationMs, flipDurationMs, initialDelayMs } = ANIMATION_TIMING;
-
-    // Total cycle length: 3 holds + 3 flips
     const totalCycleDuration = holdDurationMs * 3 + flipDurationMs * 3;
-
-    // Calculate edge progress values (accounting for max stagger)
     const maxStagger = STAGGER_CONFIG.maxStagger;
     const afterFlip2End = K.ROLODEX_2_END + maxStagger;
     const afterResetEnd = K.RESET_END + maxStagger;
     const holdMidpoint = (K.ROLODEX_1_END + maxStagger + K.ROLODEX_2_START) / 2;
 
-    // Build a timeline as pairs of [cumulativeTimeMs, progressValue]
     let cumulativeTime = 0;
     const timeline: [number, number][] = [];
 
@@ -60,7 +54,6 @@ export function useRolodexAnimation(options: UseRolodexAnimationOptions = {}): M
     // Reset -> After Reset End
     addKeyframe(flipDurationMs, afterResetEnd);
 
-    /** Linearly interpolate progress from timeline at a given elapsed time */
     function getProgressAtTime(elapsedMs: number): number {
       const cycleTime = elapsedMs % totalCycleDuration;
 
@@ -77,12 +70,10 @@ export function useRolodexAnimation(options: UseRolodexAnimationOptions = {}): M
       return timeline[timeline.length - 1][1];
     }
 
-    // Animation loop
     let startTime: number | null = null;
     let rafId = 0;
 
     const tick = (timestamp: number) => {
-      // Resume from where we left off
       startTime ??= timestamp - elapsedRef.current;
 
       const elapsed = timestamp - startTime;

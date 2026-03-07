@@ -9,7 +9,7 @@
  * directly to framer-motion components.
  */
 
-import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useMemo, useReducer, useRef, useState } from "react";
 import { useTransform } from "framer-motion";
 import type { MotionValue } from "framer-motion";
 import type { ImageAnimationPhase, ImageTransform } from "../types";
@@ -54,18 +54,32 @@ export function useImageTransform({
   const [measuredPositions, setMeasuredPositions] = useState<MeasuredPosition[]>([]);
 
   // Track DOM elements
-  const [containerEl, setContainerEl] = useState<HTMLElement | null>(null);
-  const [topLeftEl, setTopLeftEl] = useState<HTMLElement | null>(null);
-  const [centerEl, setCenterEl] = useState<HTMLElement | null>(null);
-  const [bottomMiddleEl, setBottomMiddleEl] = useState<HTMLElement | null>(null);
-  const [bottomRightEl, setBottomRightEl] = useState<HTMLElement | null>(null);
-  const [isDesktop, setIsDesktop] = useState(false);
+  const [containerEl, setContainerEl] = useReducer(
+    (_: HTMLElement | null, next: HTMLElement | null) => next,
+    null,
+  );
+  const [topLeftEl, setTopLeftEl] = useReducer(
+    (_: HTMLElement | null, next: HTMLElement | null) => next,
+    null,
+  );
+  const [centerEl, setCenterEl] = useReducer(
+    (_: HTMLElement | null, next: HTMLElement | null) => next,
+    null,
+  );
+  const [bottomMiddleEl, setBottomMiddleEl] = useReducer(
+    (_: HTMLElement | null, next: HTMLElement | null) => next,
+    null,
+  );
+  const [bottomRightEl, setBottomRightEl] = useReducer(
+    (_: HTMLElement | null, next: HTMLElement | null) => next,
+    null,
+  );
+  const [isDesktop, setIsDesktop] = useReducer((_: boolean, next: boolean) => next, false);
 
   useEffect(() => {
     setIsDesktop(window.innerWidth >= 1024);
   }, []);
 
-  // Keep refs to latest values to avoid stale closures
   const phasesRef = useRef(phases);
   const gridConfigRef = useRef(gridConfig);
 
@@ -90,15 +104,12 @@ export function useImageTransform({
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  // Measurement function
   const measureRef = useRef(() => {});
   measureRef.current = () => {
     if (!topLeftEl || !centerEl || !bottomRightEl) return;
 
     const containerRect = containerEl?.getBoundingClientRect();
     if (!containerRect) return;
-    // During breakpoint switches / resize, layout can temporarily report 0 sizes.
-    // Avoid producing NaN/Infinity MotionValues (which can crash framer-motion).
     if (containerRect.width <= 0 || containerRect.height <= 0) return;
 
     const topLeftRect = topLeftEl.getBoundingClientRect();
@@ -108,7 +119,6 @@ export function useImageTransform({
 
     if (centerRect.width <= 0 || centerRect.height <= 0) return;
 
-    // Convert to container-relative coordinates
     const topLeft = {
       x: topLeftRect.left - containerRect.left,
       y: topLeftRect.top - containerRect.top,
@@ -141,7 +151,6 @@ export function useImageTransform({
     const positions = phasesRef.current.map((phase) => {
       const { rowStart, columnStart } = phase.gridPosition;
 
-      // Determine which reference position this phase targets
       let targetRect: typeof topLeft;
       if (rowStart === 1) {
         targetRect = topLeft;
@@ -151,9 +160,6 @@ export function useImageTransform({
         targetRect = center;
       }
 
-      // Calculate scale relative to center (the hero position)
-      // If a target rect is temporarily 0-sized (e.g. during responsive relayout),
-      // keep the previous measurement instead of emitting NaN/Infinity.
       if (targetRect.width <= 0 || targetRect.height <= 0) {
         hadInvalidMeasurement = true;
         return { x: 0, y: 0, scale: 1 };
@@ -165,7 +171,6 @@ export function useImageTransform({
         return { x: 0, y: 0, scale: 1 };
       }
 
-      // Calculate offset from center
       const xOffset = targetRect.x - center.x + (center.width * (scaleFactor - 1)) / 2;
 
       let yOffset = targetRect.y - center.y;
@@ -190,8 +195,6 @@ export function useImageTransform({
       return result;
     });
 
-    // If any phase had to fall back, keep output stable by not updating with partial junk.
-    // This avoids sudden disappears during breakpoint transitions.
     if (hadInvalidMeasurement) return;
 
     setMeasuredPositions(positions);
@@ -201,14 +204,12 @@ export function useImageTransform({
     measureRef.current();
   }, []);
 
-  // Measure when elements are available
   useEffect(() => {
     if (topLeftEl && centerEl && bottomRightEl) {
       measure();
     }
   }, [topLeftEl, centerEl, bottomRightEl, containerEl, isDesktop]);
 
-  // Re-measure on resize via ResizeObserver
   useResizeObserver(
     () => {
       measure();
@@ -217,7 +218,6 @@ export function useImageTransform({
     containerEl,
   );
 
-  // Build interpolation input/output arrays from phases and measured positions
   const progressBreakpoints = useMemo(() => {
     const points: number[] = [];
     for (const phase of phases) {
@@ -256,7 +256,6 @@ export function useImageTransform({
     return values;
   }, [measuredPositions, progressBreakpoints]);
 
-  // Create interpolated motion values
   const x = useTransform(scrollProgress, progressBreakpoints, xOutputValues, {
     ease: defaultEasing,
   });

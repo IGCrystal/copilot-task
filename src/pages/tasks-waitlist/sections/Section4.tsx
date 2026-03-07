@@ -10,7 +10,7 @@
  * Narrow viewports: simple stacked image cards.
  */
 
-import React, { useRef, useMemo, useState, useLayoutEffect, useEffect } from "react";
+import React, { useRef, useMemo, useLayoutEffect, useEffect, useReducer } from "react";
 import { motion, useMotionValue, useTransform, useMotionTemplate } from "framer-motion";
 import type { MotionValue } from "framer-motion";
 import { cn } from "@/lib/utils";
@@ -106,17 +106,21 @@ function WideCarousel({ scrollYProgress }: WideCarouselProps) {
   );
 
   // ---- Image preloading ----
-  const [imagesLoaded, setImagesLoaded] = useState([false, false, false]);
+  const [imagesLoaded, markImageLoaded] = useReducer(
+    (prev: boolean[], index: number) => {
+      if (prev[index]) return prev;
+      const next = [...prev];
+      next[index] = true;
+      return next;
+    },
+    [false, false, false],
+  );
   useLayoutEffect(() => {
     const cleanups: (() => void)[] = [];
     for (const idx of [0, 1, 2]) {
       const img = new Image();
       const onDone = () => {
-        setImagesLoaded((prev) => {
-          const next = [...prev];
-          next[idx] = true;
-          return next;
-        });
+        markImageLoaded(idx);
       };
       if (img.complete && img.naturalHeight !== 0) {
         onDone();
@@ -138,7 +142,13 @@ function WideCarousel({ scrollYProgress }: WideCarouselProps) {
   // ---- Text overlay visibility tracking ----
   const tolerance = 0.02;
   const fadeDuration = 0.025;
-  const [textVisible, setTextVisible] = useState([false, false, false]);
+  const [textVisible, setTextVisible] = useReducer(
+    (prev: boolean[], next: boolean[]) => {
+      if (prev[0] === next[0] && prev[1] === next[1] && prev[2] === next[2]) return prev;
+      return next;
+    },
+    [false, false, false],
+  );
 
   useLayoutEffect(() => {
     const update = (p: number) => {
@@ -149,10 +159,7 @@ function WideCarousel({ scrollYProgress }: WideCarouselProps) {
         p >= CK.PART_2_TRANSITION_END - tolerance &&
         p <= CK.PART_3_TRANSITION_START + fadeDuration + tolerance;
       const v3 = p >= CK.PART_3_TRANSITION_END - tolerance;
-      setTextVisible((prev) => {
-        if (prev[0] === v1 && prev[1] === v2 && prev[2] === v3) return prev;
-        return [v1, v2, v3];
-      });
+      setTextVisible([v1, v2, v3]);
     };
     update(progress.get());
     return progress.on("change", update);
@@ -311,7 +318,10 @@ function ImageOverlay({
       : "origin-bottom-right rtl:origin-bottom-left";
   }, [config]);
 
-  const [transformOrigin, setTransformOrigin] = useState(initialOrigin);
+  const [transformOrigin, setTransformOrigin] = useReducer(
+    (prev: string, next: string) => (prev === next ? prev : next),
+    initialOrigin,
+  );
 
   useEffect(() => {
     const computeOrigin = (p: number) => {
@@ -320,14 +330,10 @@ function ImageOverlay({
       return p < exitStart ? initialOrigin : "origin-top-left rtl:origin-top-right";
     };
 
-    setTransformOrigin((prev) => {
-      const next = computeOrigin(scrollYProgress.get());
-      return prev === next ? prev : next;
-    });
+    setTransformOrigin(computeOrigin(scrollYProgress.get()));
 
     return scrollYProgress.on("change", (p) => {
-      const next = computeOrigin(p);
-      setTransformOrigin((prev) => (prev === next ? prev : next));
+      setTransformOrigin(computeOrigin(p));
     });
   }, [scrollYProgress, initialOrigin, config.exitScaleRange]);
 

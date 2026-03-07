@@ -18,7 +18,6 @@ const ASSET_BASE = STATIC_ASSET_PREFIX;
 // ===================== 3-Line Layout (Wide) =====================
 
 const ROLODEX_ITEMS_3LINE: RolodexItem[] = [
-  // --- Row 0: "I want to [image] [create/book/make]" ---
   {
     id: "1-1",
     type: "text",
@@ -48,8 +47,6 @@ const ROLODEX_ITEMS_3LINE: RolodexItem[] = [
     col: 2,
     animate: true,
   },
-
-  // --- Row 1: "a [image] [presentation/haircut/spreadsheet]" ---
   {
     id: "2-1",
     type: "text",
@@ -79,8 +76,6 @@ const ROLODEX_ITEMS_3LINE: RolodexItem[] = [
     col: 2,
     animate: true,
   },
-
-  // --- Row 2: "for my [image] [report/daughter/budget]" ---
   {
     id: "3-1",
     type: "text",
@@ -115,7 +110,6 @@ const ROLODEX_ITEMS_3LINE: RolodexItem[] = [
 // ===================== 5-Line Layout (Narrow) =====================
 
 const ROLODEX_ITEMS_5LINE: RolodexItem[] = [
-  // --- Row 0: "I want to" ---
   {
     id: "1-1",
     type: "text",
@@ -135,8 +129,6 @@ const ROLODEX_ITEMS_5LINE: RolodexItem[] = [
     row: 0,
     col: 1,
   },
-
-  // --- Row 1: "[create/book/make]" (animated verb) ---
   {
     id: "2-1",
     type: "text",
@@ -147,8 +139,6 @@ const ROLODEX_ITEMS_5LINE: RolodexItem[] = [
     col: 1,
     animate: true,
   },
-
-  // --- Row 2: "a" ---
   {
     id: "3-1",
     type: "text",
@@ -168,8 +158,6 @@ const ROLODEX_ITEMS_5LINE: RolodexItem[] = [
     row: 2,
     col: 1,
   },
-
-  // --- Row 3: "[presentation/haircut/spreadsheet]" (animated noun) ---
   {
     id: "3-3",
     type: "text",
@@ -180,8 +168,6 @@ const ROLODEX_ITEMS_5LINE: RolodexItem[] = [
     col: 1,
     animate: true,
   },
-
-  // --- Row 4: "for my" ---
   {
     id: "4-1",
     type: "text",
@@ -201,8 +187,6 @@ const ROLODEX_ITEMS_5LINE: RolodexItem[] = [
     row: 3,
     col: 1,
   },
-
-  // --- Row 5: "[report/daughter/budget]" (animated object) ---
   {
     id: "5-1",
     type: "text",
@@ -216,18 +200,14 @@ const ROLODEX_ITEMS_5LINE: RolodexItem[] = [
 ];
 
 // ===================== Helpers =====================
-
-/** Get the diagonal index (row + col) for stagger calculation */
 export function getDiagonalIndex(row: number, col: number): number {
   return row + col;
 }
 
-/** Find the maximum diagonal index across all items */
 export function getMaxDiagonalIndex(items: RolodexItem[]): number {
   return Math.max(...items.map((item) => getDiagonalIndex(item.row, item.col)));
 }
 
-/** Get the rolodex items for the given layout variant */
 export function getRolodexItems(layout: RolodexLayout): RolodexItem[] {
   return layout === "5-line" ? ROLODEX_ITEMS_5LINE : ROLODEX_ITEMS_3LINE;
 }

@@ -12,9 +12,7 @@ import type { RefObject } from "react";
 interface UseOverflowDetectionOptions {
   containerRef: RefObject<HTMLElement | null>;
   childRef: RefObject<HTMLElement | null>;
-  /** Fraction of container width at which content is considered overflowing (default: 0.9) */
   threshold?: number;
-  /** Additional fraction above threshold to prevent toggling (default: 0.05) */
   hysteresis?: number;
 }
 
@@ -45,13 +43,11 @@ export function useOverflowDetection({
       let newState = lastStateRef.current;
 
       if (lastStateRef.current) {
-        // Currently overflowing - check if we should reset
         if (childScrollWidth < resetWidth) {
           shouldUpdate = true;
           newState = false;
         }
       } else {
-        // Not overflowing - check if we should trigger
         if (childScrollWidth >= triggerWidth) {
           shouldUpdate = true;
           newState = true;
@@ -59,7 +55,6 @@ export function useOverflowDetection({
       }
 
       if (shouldUpdate) {
-        // Debounce the state change to avoid rapid toggling
         if (debounceTimerRef.current !== null) {
           window.clearTimeout(debounceTimerRef.current);
         }

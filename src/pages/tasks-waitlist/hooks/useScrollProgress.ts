@@ -25,8 +25,6 @@ export function useScrollProgress({
   negativeMarginOffset = 0,
 }: ScrollProgressOptions): { scrollYProgress: MotionValue<number> } {
   const scrollYProgress = useMotionValue(0);
-
-  // Parse an offset string like "start start" or "50% end"
   const parseOffset = useCallback((offsetStr: string): ParsedEdge => {
     const parts = offsetStr.trim().split(/\s+/);
 
@@ -45,8 +43,6 @@ export function useScrollProgress({
 
     return [parts[0], parts[1]] as ParsedEdge;
   }, []);
-
-  // Compute progress from current scroll position
   const computeProgress = useCallback(
     (currentScroll: number) => {
       const element = target.current;
@@ -71,7 +67,6 @@ export function useScrollProgress({
         });
       }
 
-      // Resolve an element edge to a pixel position relative to viewport
       const resolveElementEdge = (edge: Edge): number => {
         let position: number;
 
@@ -107,7 +102,6 @@ export function useScrollProgress({
         return position + negativeMarginOffset;
       };
 
-      // Resolve a viewport edge to a pixel position
       const resolveViewportEdge = (edge: Edge): number => {
         const viewportSize = orientation === "vertical" ? window.innerHeight : window.innerWidth;
 
@@ -132,13 +126,10 @@ export function useScrollProgress({
         }
       };
 
-      // Calculate start scroll position
       const elementStartPixel = resolveElementEdge(startElementEdge);
       const elementStartInScrollSpace = currentScroll + elementStartPixel;
       const viewportStartPixel = resolveViewportEdge(startViewportEdge);
       const startScrollPosition = elementStartInScrollSpace - viewportStartPixel;
-
-      // Calculate end scroll position
       const elementEndPixel = resolveElementEdge(endElementEdge);
       const elementEndInScrollSpace = currentScroll + elementEndPixel;
       const viewportEndPixel = resolveViewportEdge(endViewportEdge);
@@ -168,7 +159,6 @@ export function useScrollProgress({
         console.log("======================");
       }
 
-      // Compute progress
       const scrollRange = endScrollPosition - startScrollPosition;
       let rawProgress: number;
 
@@ -181,7 +171,6 @@ export function useScrollProgress({
 
       if (scrollRange !== 0) {
         const linearProgress = (currentScroll - startScrollPosition) / scrollRange;
-        // Reverse animations are normalized so progress still goes 0 -> 1
         rawProgress = scrollRange < 0 ? 1 - linearProgress : linearProgress;
 
         if (debug) {
@@ -189,7 +178,6 @@ export function useScrollProgress({
           console.log("Normalized Progress:", rawProgress);
         }
       } else {
-        // Instant transition: 0 before the point, 1 after
         rawProgress = currentScroll >= startScrollPosition ? 1 : 0;
         if (debug) console.log("Instant Progress:", rawProgress);
       }
@@ -206,7 +194,6 @@ export function useScrollProgress({
     [target, offset, parseOffset, orientation, debug, scrollYProgress, negativeMarginOffset],
   );
 
-  // Initialize and recompute on mount
   useEffect(() => {
     scrollYProgress.set(-1);
     computeProgress(lenisScroll.get());
@@ -215,7 +202,6 @@ export function useScrollProgress({
     });
   }, [computeProgress, lenisScroll, scrollYProgress]);
 
-  // Subscribe to scroll changes (with 1px threshold to avoid unnecessary updates)
   useEffect(() => {
     let lastScroll = lenisScroll.get();
     return lenisScroll.on("change", (newScroll: number) => {
@@ -226,7 +212,6 @@ export function useScrollProgress({
     });
   }, [lenisScroll, computeProgress]);
 
-  // Recompute on window resize
   useEffect(() => {
     const handleResize = () => {
       computeProgress(lenisScroll.get());

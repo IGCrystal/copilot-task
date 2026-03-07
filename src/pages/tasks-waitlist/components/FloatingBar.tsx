@@ -6,7 +6,7 @@
  * tracking for precise show/hide logic.
  */
 
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useReducer, useEffect, useMemo } from "react";
 import { motion, useTransform } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { useTranslation } from "@/lib/i18n";
@@ -32,10 +32,16 @@ export function FloatingBar({ className }: { className?: string }) {
   const isNearlyOne = (v: number) => v >= 1 - EPS;
 
   // Find section-2 and section-end DOM elements
-  const [section2El, setSection2El] = useState<Element | null>(null);
+  const [section2El, setSection2El] = useReducer(
+    (_: Element | null, next: Element | null) => next,
+    null,
+  );
   const section2Ref = useMemo(() => ({ current: section2El }), [section2El]);
 
-  const [sectionEndEl, setSectionEndEl] = useState<Element | null>(null);
+  const [sectionEndEl, setSectionEndEl] = useReducer(
+    (_: Element | null, next: Element | null) => next,
+    null,
+  );
   const sectionEndRef = useMemo(() => ({ current: sectionEndEl }), [sectionEndEl]);
 
   useEffect(() => {
@@ -60,7 +66,7 @@ export function FloatingBar({ className }: { className?: string }) {
   });
 
   // Show when section-2 has scrolled past and section-end not yet in view
-  const [visible, setVisible] = useState(false);
+  const [visible, setVisible] = useReducer((_: boolean, next: boolean) => next, false);
 
   useEffect(() => {
     const update = () => {

@@ -80,5 +80,4 @@ export const FEATURE_ITEMS: FeatureItem[] = [
   },
 ];
 
-/** Size of each feature segment in normalized scroll progress (0-1) */
 export const FEATURE_SEGMENT_SIZE = 1 / FEATURE_ITEMS.length;

@@ -6,7 +6,7 @@
  * the hero section is in view and focused via keyboard.
  */
 
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo, useReducer } from "react";
 import { cn } from "@/lib/utils";
 import { useTranslation } from "@/lib/i18n";
 import { useReducedMotion } from "@/lib/hooks";
@@ -22,7 +22,10 @@ export function SkipToContent() {
   const shouldReduceMotion = useReducedMotion();
 
   // Get the Section 1 DOM element for scroll tracking
-  const [section1Element, setSection1Element] = useState<HTMLElement | null>(null);
+  const [section1Element, setSection1Element] = useReducer(
+    (_: HTMLElement | null, next: HTMLElement | null) => next,
+    null,
+  );
   const section1Ref = useMemo(() => ({ current: section1Element }), [section1Element]);
 
   useEffect(() => {

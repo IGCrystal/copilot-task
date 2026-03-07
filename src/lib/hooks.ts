@@ -2,13 +2,16 @@
  * Mock: Common hooks.
  */
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useReducer, useRef } from "react";
 
 /**
  * Returns true if the user prefers reduced motion.
  */
 export function useReducedMotion(): boolean {
-  const [prefersReduced, setPrefersReduced] = useState(false);
+  const [prefersReduced, setPrefersReduced] = useReducer(
+    (_: boolean, next: boolean) => next,
+    false,
+  );
 
   useEffect(() => {
     const mql = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -34,10 +37,10 @@ const BREAKPOINT_MAP: Record<string, string> = {
 
 export function useMediaQuery(query: string): boolean {
   const resolved = BREAKPOINT_MAP[query] ?? query;
-  const [matches, setMatches] = useState(() => {
-    if (typeof window === "undefined") return false;
-    return window.matchMedia(resolved).matches;
-  });
+  const [matches, setMatches] = useReducer(
+    (_: boolean, next: boolean) => next,
+    typeof window !== "undefined" ? window.matchMedia(resolved).matches : false,
+  );
 
   useEffect(() => {
     const mql = window.matchMedia(resolved);

@@ -6,7 +6,7 @@
  * and direction. Handles raf loop management and cleanup.
  */
 
-import { useEffect, useState } from "react";
+import { useEffect, useReducer } from "react";
 import { useMotionValue } from "framer-motion";
 import Lenis from "lenis";
 import type { RefObject } from "react";
@@ -25,7 +25,7 @@ export function useLenisSetup({
   const scroll = useMotionValue(0);
   const progress = useMotionValue(0);
   const direction = useMotionValue(0);
-  const [lenis, setLenis] = useState<Lenis | null>(null);
+  const [lenis, setLenis] = useReducer((_: Lenis | null, next: Lenis | null) => next, null);
 
   useEffect(() => {
     if (!wrapper.current || !content.current) return;
@@ -48,7 +48,6 @@ export function useLenisSetup({
 
     setLenis(instance);
 
-    // Initialize with current values
     let lastScroll = instance.scroll;
     let lastProgress = instance.limit > 0 ? instance.scroll / instance.limit : 0;
     let lastDirection = instance.direction;
@@ -57,7 +56,6 @@ export function useLenisSetup({
     progress.set(lastProgress);
     direction.set(lastDirection);
 
-    // Custom raf loop that updates motion values only when values change
     let rafId: number;
 
     function onFrame(time: number) {
@@ -67,7 +65,6 @@ export function useLenisSetup({
       const currentLimit = instance.limit;
       const currentProgress = currentLimit > 0 ? currentScroll / currentLimit : 0;
       const currentDirection = instance.direction;
-
       const scrollChanged = Math.abs(currentScroll - lastScroll) >= 0.5;
       const progressChanged = Math.abs(currentProgress - lastProgress) >= 1e-4;
       const directionChanged = currentDirection !== lastDirection;
