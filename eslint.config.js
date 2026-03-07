@@ -46,10 +46,7 @@ export default [
         ...globals.es2020,
       },
     },
-    plugins: { "react-refresh": reactRefresh },
     rules: {
-      ...reactRefreshRecommendedRules,
-
       // Prefer TS for unused checks; keep noise low.
       "@typescript-eslint/no-unused-vars": [
         "warn",
@@ -59,8 +56,15 @@ export default [
           caughtErrorsIgnorePattern: "^_",
         },
       ],
+    },
+  },
 
-      // Vite + React refresh: warn when exporting non-components from React modules.
+  // Vite + React refresh: only relevant for React component modules.
+  {
+    files: ["src/**/*.{tsx,jsx}"],
+    plugins: { "react-refresh": reactRefresh },
+    rules: {
+      ...reactRefreshRecommendedRules,
       "react-refresh/only-export-components": ["warn", { allowConstantExport: true }],
     },
   },
