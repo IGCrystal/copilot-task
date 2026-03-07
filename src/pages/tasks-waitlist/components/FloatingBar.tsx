@@ -2,7 +2,7 @@
  * FloatingBar - Fixed bottom pill with the Copilot Tasks logo and CTA button.
  *
  * Appears when section-2 scrolls past the viewport bottom and hides
- * when the SectionEnd card reaches the viewport. Uses element-based scroll
+ * when the SectionEnd card is sufficiently inside the viewport. Uses element-based scroll
  * tracking for precise show/hide logic.
  */
 
@@ -29,7 +29,9 @@ export function FloatingBar({ className }: { className?: string }) {
   const EPS = 0.001;
   const isPositive = (v: number) => v > EPS;
   const isZeroish = (v: number) => v <= EPS;
-  const END_HIDE_THRESHOLD = 0.08;
+  // `endProgress` runs 0->1 as the end-card top moves from viewport bottom -> viewport top.
+  // Hide once we're "inside" the card (not immediately at first contact).
+  const END_HIDE_THRESHOLD = 0.24;
   const [section2El, setSection2El] = useReducer(
     (_: Element | null, next: Element | null) => next,
     null,
@@ -59,7 +61,7 @@ export function FloatingBar({ className }: { className?: string }) {
 
   const { scrollYProgress: endProgress } = useScrollProgress({
     target: sectionEndRef as React.RefObject<HTMLElement>,
-    offset: ["end end", "end start"],
+    offset: ["start end", "start start"],
     lenisScroll,
   });
 
