@@ -21,7 +21,7 @@ import { defaultEasing } from "@/lib/easing";
 import { CAROUSEL_KEYFRAMES as CK, IMAGE_BORDER_RADIUS, WIDE_MAX_WIDTH } from "../constants";
 import { CAROUSEL_IMAGES, IMAGE_ANIMATION_CONFIGS } from "../data/carousel-configs";
 import { useSectionContext } from "../context/SectionContext";
-import { useLenisScrollContext } from "../context/LenisScrollContext";
+import { useLenisScrollContext } from "../context/useLenisScrollContext";
 import { StickyContainer } from "../components/StickyContainer";
 import { useImageTransform } from "../hooks/useImageTransform";
 import { useScrollProgress } from "../hooks/useScrollProgress";
@@ -130,11 +130,11 @@ function WideCarousel({ scrollYProgress }: WideCarouselProps) {
       if (img.complete && img.naturalHeight !== 0) {
         onDone();
       } else {
-        img.addEventListener("load", onDone);
-        img.addEventListener("error", onDone);
+        img.onload = onDone;
+        img.onerror = onDone;
         cleanups.push(() => {
-          img.removeEventListener("load", onDone);
-          img.removeEventListener("error", onDone);
+          img.onload = null;
+          img.onerror = null;
         });
       }
       img.src = imageSrcs[idx]!;
@@ -284,28 +284,19 @@ function ImageOverlay({
   });
 
   // Opacity
-  const opacityOutputs = disableIntroOpacity ? [1, 1, 1, 0] : [0, 1, 1, 0];
-  const opacityInputs = disableIntroOpacity
-    ? config.exitScaleRange
-      ? [config.innerScaleRange[0], config.innerScaleRange[1], exitRange[0], exitRange[1]]
-      : [config.innerScaleRange[0], config.innerScaleRange[1]]
-    : config.exitScaleRange
-      ? [config.innerScaleRange[0], config.innerScaleRange[1], exitRange[0], exitRange[1]]
-      : [config.innerScaleRange[0], config.innerScaleRange[1]];
-  const imgOpacity = useTransform(
-    scrollYProgress,
-    config.exitScaleRange
-      ? [config.innerScaleRange[0], config.innerScaleRange[1], exitRange[0], exitRange[1]]
-      : [config.innerScaleRange[0], config.innerScaleRange[1]],
-    config.exitScaleRange
-      ? disableIntroOpacity
-        ? [1, 1, 1, 0]
-        : [0, 1, 1, 0]
-      : disableIntroOpacity
-        ? [1, 1]
-        : [0, 1],
-    { ease: defaultEasing },
-  );
+  const opacityInputs = config.exitScaleRange
+    ? [config.innerScaleRange[0], config.innerScaleRange[1], exitRange[0], exitRange[1]]
+    : [config.innerScaleRange[0], config.innerScaleRange[1]];
+  const opacityOutputs = config.exitScaleRange
+    ? disableIntroOpacity
+      ? [1, 1, 1, 0]
+      : [0, 1, 1, 0]
+    : disableIntroOpacity
+      ? [1, 1]
+      : [0, 1];
+  const imgOpacity = useTransform(scrollYProgress, opacityInputs, opacityOutputs, {
+    ease: defaultEasing,
+  });
 
   // Image inner scale (zoom in effect that resolves to 1.15 max)
   const centerPhaseStart =
@@ -474,7 +465,6 @@ function TextOverlay({
 // ===================== Narrow Carousel =====================
 
 function NarrowCarousel() {
-  const { t } = useTranslation();
   const theme = useThemeValue();
 
   const imageSrcs = useMemo(

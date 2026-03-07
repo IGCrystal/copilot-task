@@ -14,7 +14,7 @@ import { useReducedMotion } from "@/lib/hooks";
 import { useThemeValue } from "@/lib/theme";
 import { defaultEasing } from "@/lib/easing";
 import { useSectionContext } from "../context/SectionContext";
-import { useLenisScrollContext } from "../context/LenisScrollContext";
+import { useLenisScrollContext } from "../context/useLenisScrollContext";
 import { useScrollProgress } from "../hooks/useScrollProgress";
 import { StickyContainer } from "../components/StickyContainer";
 import { CopilotWordmark } from "../icons";

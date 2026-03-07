@@ -84,7 +84,7 @@ export function WaitlistButton({ placement = "home" }: WaitlistButtonProps) {
   });
 
   const [showingConfirmation, setShowingConfirmation] = useState(false);
-  const confirmationTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const confirmationTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const wasPendingRef = useRef(false);
   const hasAttemptedResumeRef = useRef(false);
 
@@ -127,13 +127,13 @@ export function WaitlistButton({ placement = "home" }: WaitlistButtonProps) {
 
     const hideDelay = isError ? 0 : JOIN_CONFIRMATION_DURATION_MS;
 
-    confirmationTimer.current = setTimeout(() => {
+    confirmationTimerRef.current = setTimeout(() => {
       setShowingConfirmation(false);
     }, hideDelay);
 
     return () => {
-      if (confirmationTimer.current) {
-        clearTimeout(confirmationTimer.current);
+      if (confirmationTimerRef.current) {
+        clearTimeout(confirmationTimerRef.current);
       }
     };
   }, [isPending, isError]);

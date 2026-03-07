@@ -11,7 +11,7 @@ import { useTranslation } from "@/lib/i18n";
 import { CONTENT_MAX_WIDTH } from "../constants";
 import { CopilotTasksLogo } from "../icons";
 import { WaitlistButton } from "../components/WaitlistButton";
-import { useLenisScrollContext } from "../context/LenisScrollContext";
+import { useLenisScrollContext } from "../context/useLenisScrollContext";
 import { useScrollProgress } from "../hooks/useScrollProgress";
 import { useMotionValueEvent } from "framer-motion";
 

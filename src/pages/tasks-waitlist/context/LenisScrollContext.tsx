@@ -5,23 +5,11 @@
  * progress, direction) and viewport dimensions to all child components.
  */
 
-import React, { createContext, use, useMemo } from "react";
+import React, { useMemo } from "react";
 import type { MotionValue } from "framer-motion";
-import type { LenisScrollContextValue, LenisInstance } from "../types";
+import type { LenisInstance } from "../types";
 
-const LenisScrollContext = createContext<LenisScrollContextValue | null>(null);
-
-/**
- * Access the Lenis scroll context. Must be used within a LenisScrollProvider.
- * @throws Error if used outside of provider
- */
-export function useLenisScrollContext(): LenisScrollContextValue {
-  const context = use(LenisScrollContext);
-  if (!context) {
-    throw new Error("useLenisScrollContext must be used within a LenisScrollProvider");
-  }
-  return context;
-}
+import { LenisScrollContext } from "./LenisScrollContextInternal";
 
 // ===================== Provider =====================
 
@@ -59,5 +47,5 @@ export function LenisScrollProvider({
     [lenisScroll, lenisProgress, lenis, lenisDirection, viewportHeight, viewportWidth, isNarrow],
   );
 
-  return <LenisScrollContext.Provider value={value}>{children}</LenisScrollContext.Provider>;
+  return <LenisScrollContext value={value}>{children}</LenisScrollContext>;
 }

@@ -10,13 +10,13 @@
  * - Providing SectionContext to children
  */
 
-import React, { forwardRef, useMemo, useRef, useImperativeHandle } from "react";
+import React, { useCallback, useMemo, useRef } from "react";
 import { cn } from "@/lib/utils";
 import { useTranslation } from "@/lib/i18n";
 import { useReducedMotion } from "@/lib/hooks";
 import { HEADER_HEIGHT_OFFSET } from "../constants";
 import { SECTION_CONFIGS, getEffectiveHeightMultiplier } from "../data/section-configs";
-import { useLenisScrollContext } from "../context/LenisScrollContext";
+import { useLenisScrollContext } from "../context/useLenisScrollContext";
 import { SectionContext } from "../context/SectionContext";
 import { useScrollProgress } from "../hooks/useScrollProgress";
 
@@ -27,22 +27,36 @@ interface SectionProps {
   sectionId?: string;
   enableScrollProgress?: boolean;
   scrollTrackingEdge?: [string, string];
+  ref?: React.Ref<HTMLElement>;
 }
 
-export const Section = forwardRef<HTMLElement, SectionProps>(
-  (
-    {
-      children,
-      heightMultiplier = 1,
-      className,
-      sectionId,
-      enableScrollProgress = false,
-      scrollTrackingEdge = ["top", "top"],
+function setRef<T>(ref: React.Ref<T> | undefined, value: T | null) {
+  if (!ref) return;
+  if (typeof ref === "function") {
+    ref(value);
+  } else {
+    ref.current = value;
+  }
+}
+
+export function Section({
+  children,
+  heightMultiplier = 1,
+  className,
+  sectionId,
+  enableScrollProgress = false,
+  scrollTrackingEdge = ["top", "top"],
+  ref: forwardedRef,
+}: SectionProps) {
+  const internalRef = useRef<HTMLElement>(null);
+
+  const setSectionRef = useCallback(
+    (node: HTMLElement | null) => {
+      internalRef.current = node;
+      setRef(forwardedRef, node);
     },
-    ref,
-  ) => {
-    const internalRef = useRef<HTMLElement>(null);
-    useImperativeHandle(ref, () => internalRef.current!);
+    [forwardedRef],
+  );
 
     const { lenisScroll, isNarrow } = useLenisScrollContext();
     const shouldReduceMotion = useReducedMotion() === true;
@@ -137,29 +151,26 @@ export const Section = forwardRef<HTMLElement, SectionProps>(
       [sectionProgress, stickyEnabled],
     );
 
-    return (
-      <SectionContext value={contextValue}>
-        <section
-          ref={internalRef}
-          aria-label={ariaLabelText}
-          tabIndex={-1}
-          className={cn(
-            "pointer-events-none relative outline-none select-text",
-            minHeightClass,
-            className,
-          )}
-          data-section-id={sectionId}
-          style={{
-            ...(marginTopStyle && { marginTop: marginTopStyle }),
-            ...(minHeightStyle && { minHeight: minHeightStyle }),
-            ...(zIndex !== undefined && { zIndex }),
-          }}
-        >
-          {children}
-        </section>
-      </SectionContext>
-    );
-  },
-);
-
-Section.displayName = "Section";
+  return (
+    <SectionContext value={contextValue}>
+      <section
+        ref={setSectionRef}
+        aria-label={ariaLabelText}
+        tabIndex={-1}
+        className={cn(
+          "pointer-events-none relative outline-none select-text",
+          minHeightClass,
+          className,
+        )}
+        data-section-id={sectionId}
+        style={{
+          ...(marginTopStyle && { marginTop: marginTopStyle }),
+          ...(minHeightStyle && { minHeight: minHeightStyle }),
+          ...(zIndex !== undefined && { zIndex }),
+        }}
+      >
+        {children}
+      </section>
+    </SectionContext>
+  );
+}

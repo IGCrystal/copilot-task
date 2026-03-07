@@ -13,7 +13,7 @@ import { useReducedMotion } from "@/lib/hooks";
 import { useMotionValueEvent } from "framer-motion";
 import { HEADER_HEIGHT_OFFSET, SCROLL_KEYFRAMES } from "../constants";
 import { SECTION_CONFIGS } from "../data/section-configs";
-import { useLenisScrollContext } from "../context/LenisScrollContext";
+import { useLenisScrollContext } from "../context/useLenisScrollContext";
 import { useScrollProgress } from "../hooks/useScrollProgress";
 
 export function SkipToContent() {

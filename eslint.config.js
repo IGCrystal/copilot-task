@@ -73,6 +73,10 @@ export default [
   {
     files: ["src/**/*.{ts,tsx}"],
     rules: {
+      // This rule is too strict for common UI patterns (DOM queries, subscriptions, external stores).
+      // Keep it off to avoid encouraging awkward refactors.
+      "@eslint-react/hooks-extra/no-direct-set-state-in-use-effect": "off",
+
       // This codebase currently uses `any` in a few boundary layers; keep as warnings.
       "@typescript-eslint/no-explicit-any": "warn",
 

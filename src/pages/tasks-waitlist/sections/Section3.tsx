@@ -21,7 +21,7 @@ import { defaultEasing } from "@/lib/easing";
 import { CONTENT_MAX_WIDTH } from "../constants";
 import { FEATURE_ITEMS, FEATURE_SEGMENT_SIZE } from "../data/feature-items";
 import { useSectionContext } from "../context/SectionContext";
-import { useLenisScrollContext } from "../context/LenisScrollContext";
+import { useLenisScrollContext } from "../context/useLenisScrollContext";
 import { useScrollProgress } from "../hooks/useScrollProgress";
 import { StickyContainer } from "../components/StickyContainer";
 import { ActionBadge } from "../components/ActionBadge";
@@ -360,7 +360,7 @@ function FeatureItem({
         >
           <div className="text-base-dense sm:line-clamp-2">{t(feature.descriptionKey)}</div>
           <div className="flex flex-wrap gap-2">
-            {feature.actionItems.map((action, ai) => (
+            {feature.actionItems.map((action) => (
               <ActionBadge
                 key={`${action.labelKey}::${action.icon ?? ""}`}
                 labelKey={action.labelKey}

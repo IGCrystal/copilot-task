@@ -20,7 +20,7 @@ import { useReducedMotion } from "@/lib/hooks";
 import { defaultEasing } from "@/lib/easing";
 import { SCROLL_KEYFRAMES as K, CONTENT_MAX_WIDTH, LAYOUT_CONFIG } from "../constants";
 import { useSectionContext } from "../context/SectionContext";
-import { useLenisScrollContext } from "../context/LenisScrollContext";
+import { useLenisScrollContext } from "../context/useLenisScrollContext";
 import { RolodexItem } from "../components/RolodexItem";
 import { getRolodexItems, getDiagonalIndex, getMaxDiagonalIndex } from "../data/rolodex-items";
 import { useRolodexAnimation } from "../hooks/useRolodexAnimation";
@@ -125,7 +125,7 @@ export function Section2({ sectionRef: externalSectionRef }: Section2Props) {
   const introVisibilityAnim = useTransform(
     progress,
     [K.HOLD_3_END - 0.001, K.HOLD_3_END],
-    ["visible", "hidden"],
+    ["visible", "hidden"] as const,
     { clamp: true },
   );
 
@@ -133,7 +133,7 @@ export function Section2({ sectionRef: externalSectionRef }: Section2Props) {
   const staticOne = useMotionValue(1);
   const staticZero = useMotionValue(0);
   const staticBlur = useMotionValue("blur(0px)");
-  const staticVisible = useMotionValue("visible" as string);
+  const staticVisible = useMotionValue<"visible" | "hidden">("visible");
 
   const contentScale = useStatic ? staticOne : scaleAnim;
   const contentY = useStatic ? staticZero : yOffsetAnim;
@@ -291,7 +291,7 @@ export function Section2({ sectionRef: externalSectionRef }: Section2Props) {
             )}
             style={{
               opacity: introOpacity,
-              visibility: introVisibility as any,
+              visibility: introVisibility,
             }}
           >
             <div className="relative md:bottom-12">{t("tasks.waitList.section2.introText")}</div>
@@ -347,7 +347,7 @@ export function Section2({ sectionRef: externalSectionRef }: Section2Props) {
         aria-hidden="true"
       >
         <div ref={refContentRef} className={cn("max-w-full p-6 py-14", CONTENT_TEXT_CLASSES)}>
-          {referenceRows.map((row, rowIdx) => (
+          {referenceRows.map((row) => (
             <div key={row.map((item) => item.id).join("|")} className="mb-2">
               {row.map((item, itemIdx) => (
                 <span key={item.id}>

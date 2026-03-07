@@ -4,6 +4,8 @@
  * In production, this would fetch from a locale bundle.
  */
 
+import { useCallback } from "react";
+
 // Human-readable fallbacks for common keys
 const MOCK_TRANSLATIONS: Record<string, string> = {
   "tasks.waitList.section1.wordmarkAlt": "Copilot",
@@ -90,7 +92,8 @@ const MOCK_TRANSLATIONS: Record<string, string> = {
 };
 
 export function useTranslation() {
+  // Keep this as a hook-shaped API for easy swapping with a real i18n implementation later.
   return {
-    t: (key: string): string => MOCK_TRANSLATIONS[key] ?? key,
+    t: useCallback((key: string): string => MOCK_TRANSLATIONS[key] ?? key, []),
   };
 }

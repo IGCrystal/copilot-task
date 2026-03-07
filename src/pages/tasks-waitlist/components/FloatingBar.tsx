@@ -12,7 +12,7 @@ import { cn } from "@/lib/utils";
 import { useTranslation } from "@/lib/i18n";
 import { defaultEasing } from "@/lib/easing";
 import { SHOW_LOGO_ICON } from "../constants";
-import { useLenisScrollContext } from "../context/LenisScrollContext";
+import { useLenisScrollContext } from "../context/useLenisScrollContext";
 import { useScrollProgress } from "../hooks/useScrollProgress";
 import { CopilotTasksLogo } from "../icons";
 import { WaitlistButton } from "./WaitlistButton";
