@@ -42,3 +42,7 @@ Desktop.ini
 ## Misc
 coverage/
 *.local
+
+## Generated files or Scripts
+/snapshot
+scripts/download-referenced-assets.mjs

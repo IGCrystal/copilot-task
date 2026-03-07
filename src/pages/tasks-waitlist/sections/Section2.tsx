@@ -427,11 +427,11 @@ function PauseIcon({ className }: { className?: string }) {
     <svg
       viewBox="0 0 24 24"
       fill="currentColor"
+      xmlns="http://www.w3.org/2000/svg"
       className={className}
       aria-hidden="true"
     >
-      <rect x="6" y="4" width="4" height="16" rx="1" />
-      <rect x="14" y="4" width="4" height="16" rx="1" />
+      <path d="M5.74609 3C4.7796 3 3.99609 3.7835 3.99609 4.75V19.25C3.99609 20.2165 4.7796 21 5.74609 21H9.24609C10.2126 21 10.9961 20.2165 10.9961 19.25V4.75C10.9961 3.7835 10.2126 3 9.24609 3H5.74609ZM14.7461 3C13.7796 3 12.9961 3.7835 12.9961 4.75V19.25C12.9961 20.2165 13.7796 21 14.7461 21H18.2461C19.2126 21 19.9961 20.2165 19.9961 19.25V4.75C19.9961 3.7835 19.2126 3 18.2461 3H14.7461Z" />
     </svg>
   );
 }
@@ -441,10 +441,11 @@ function PlayIcon({ className }: { className?: string }) {
     <svg
       viewBox="0 0 24 24"
       fill="currentColor"
+      xmlns="http://www.w3.org/2000/svg"
       className={className}
       aria-hidden="true"
     >
-      <path d="M8 5.14v13.72a1 1 0 0 0 1.5.86l11.24-6.86a1 1 0 0 0 0-1.72L9.5 4.28A1 1 0 0 0 8 5.14z" />
+      <path d="M5 5.27368C5 3.56682 6.82609 2.48151 8.32538 3.2973L20.687 10.0235C22.2531 10.8756 22.2531 13.124 20.687 13.9762L8.32538 20.7024C6.82609 21.5181 5 20.4328 5 18.726V5.27368Z" />
     </svg>
   );
 }
