@@ -9,3 +9,17 @@
 ## 许可证
  
 BSD-3-Clause，详见 `LICENSE`。
+
+---
+
+Pixel-perfect recreation of the Copilot Task preview page. Original page: https://copilot.microsoft.com/tasks/preview
+
+The original page requires sign-in to view. I really liked the animations and styling. I tried asking AI models to recreate it, but it wasn’t easy (even Gemini 3.1 Pro couldn’t get it right), so I decided to implement it myself.
+
+Recreated page: https://3kf1.test.i0c.cc
+
+This recreated page is for learning purposes only. The images and animations were captured/extracted from the original page. Copyright belongs to Microsoft and the original authors.
+
+## License
+
+BSD-3-Clause. See `LICENSE`.
