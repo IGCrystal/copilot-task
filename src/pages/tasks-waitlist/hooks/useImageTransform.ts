@@ -9,7 +9,15 @@
  * directly to framer-motion components.
  */
 
-import { useCallback, useEffect, useLayoutEffect, useMemo, useReducer, useRef, useState } from "react";
+import {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useReducer,
+  useRef,
+  useState,
+} from "react";
 import { useTransform } from "framer-motion";
 import type { MotionValue } from "framer-motion";
 import type { ImageAnimationPhase, ImageTransform } from "../types";
