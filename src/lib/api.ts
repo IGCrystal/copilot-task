@@ -14,8 +14,6 @@ export async function fetchApi<T>(
 ): Promise<{ data: T }> {
   const method = options?.options?.method ?? "GET";
   console.log(`[mock fetchApi] ${method} ${url}`);
-
-  // Simulate network delay
   await new Promise((r) => setTimeout(r, 300));
 
   const mockData: unknown = method === "POST" ? { status: "waitlisted" } : { status: "not_joined" };

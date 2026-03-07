@@ -6,7 +6,6 @@
 
 import { useCallback } from "react";
 
-// Human-readable fallbacks for common keys
 const MOCK_TRANSLATIONS: Record<string, string> = {
   "tasks.waitList.section1.wordmarkAlt": "Copilot",
   "tasks.waitList.section1.headlineTop": "The new way to",
@@ -56,8 +55,6 @@ const MOCK_TRANSLATIONS: Record<string, string> = {
   "tasks.waitList.section4.text3.title": "Plan and organize",
   "tasks.waitList.section4.text3.subtitle":
     "Copilot helps you plan trips, compare options, and organize your findings.",
-
-  // Section 4 - image carousel copy (used by wide + narrow variants)
   "tasks.waitList.section4.images.image1Alt": "Copilot researching information on the web.",
   "tasks.waitList.section4.images.image1TextHeadline": "Research in depth",
   "tasks.waitList.section4.images.image1TextDescription":
@@ -92,7 +89,6 @@ const MOCK_TRANSLATIONS: Record<string, string> = {
 };
 
 export function useTranslation() {
-  // Keep this as a hook-shaped API for easy swapping with a real i18n implementation later.
   return {
     t: useCallback((key: string): string => MOCK_TRANSLATIONS[key] ?? key, []),
   };

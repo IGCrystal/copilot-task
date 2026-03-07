@@ -6,7 +6,6 @@
 import { useCallback, useMemo } from "react";
 
 export function useIsAuthenticated(): boolean {
-  // Keep this as a hook-shaped API for easy swapping with a real auth implementation later.
   return useMemo(() => false, []);
 }
 

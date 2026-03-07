@@ -18,7 +18,6 @@ export function useThemeValue(): "light" | "dark" {
     return () => mql.removeEventListener("change", handler);
   }, []);
 
-  // Sync data-theme attribute on <html> for Tailwind darkMode
   useEffect(() => {
     document.documentElement.setAttribute("data-theme", theme);
   }, [theme]);
