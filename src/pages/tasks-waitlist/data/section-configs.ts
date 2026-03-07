@@ -62,7 +62,6 @@ export const SECTION_CONFIGS: SectionConfig[] = [
     id: "section-end",
     componentPath: "./sections/section-end",
     heightMultiplier: 0,
-    zIndex: 60,
     ariaLabel: "tasks.waitList.sectionEnd.ariaLabel",
     narrowOverrides: { heightMultiplier: 0, sticky: false },
   },

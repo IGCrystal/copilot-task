@@ -6,11 +6,10 @@
 
 // ===================== Layout =====================
 
-/** The media query breakpoint for narrow/mobile detection */
 export const BREAKPOINT = "md";
 
-/** Height offset for the sticky header (in pixels) */
-export const HEADER_HEIGHT_OFFSET = 12;
+/** Viewport inset offset (in pixels) used by section height/overlap math.**/
+export const HEADER_HEIGHT_OFFSET = 0;
 
 /** Max width class for main content areas */
 export const CONTENT_MAX_WIDTH = "max-w-[920px]";

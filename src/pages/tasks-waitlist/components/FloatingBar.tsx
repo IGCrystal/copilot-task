@@ -2,7 +2,7 @@
  * FloatingBar - Fixed bottom pill with the Copilot Tasks logo and CTA button.
  *
  * Appears when section-2 scrolls past the viewport bottom and hides
- * when section-end reaches the viewport. Uses element-based scroll
+ * when the SectionEnd card reaches the viewport. Uses element-based scroll
  * tracking for precise show/hide logic.
  */
 
@@ -28,7 +28,8 @@ export function FloatingBar({ className }: { className?: string }) {
 
   const EPS = 0.001;
   const isPositive = (v: number) => v > EPS;
-  const isNearlyOne = (v: number) => v >= 1 - EPS;
+  const isZeroish = (v: number) => v <= EPS;
+  const END_HIDE_THRESHOLD = 0.08;
   const [section2El, setSection2El] = useReducer(
     (_: Element | null, next: Element | null) => next,
     null,
@@ -43,7 +44,9 @@ export function FloatingBar({ className }: { className?: string }) {
 
   useEffect(() => {
     const s2 = document.querySelector('[data-section-id="section-2"]');
-    const se = document.querySelector('[data-section-id="section-end"]');
+    const se =
+      document.querySelector('[data-section-end-card]') ??
+      document.querySelector('[data-section-id="section-end"]');
     setSection2El(s2);
     setSectionEndEl(se);
   }, []);
@@ -56,7 +59,7 @@ export function FloatingBar({ className }: { className?: string }) {
 
   const { scrollYProgress: endProgress } = useScrollProgress({
     target: sectionEndRef as React.RefObject<HTMLElement>,
-    offset: ["center end", "center start"],
+    offset: ["end end", "end start"],
     lenisScroll,
   });
 
@@ -66,7 +69,8 @@ export function FloatingBar({ className }: { className?: string }) {
     const update = () => {
       const s2 = s2Progress.get();
       const end = endProgress.get();
-      setVisible(isPositive(s2) && !isNearlyOne(end));
+      const shouldShow = isPositive(s2) && (isZeroish(end) || end < END_HIDE_THRESHOLD);
+      setVisible(shouldShow);
 
       if (debug) {
         console.log("[FloatingBar]", {
@@ -74,15 +78,21 @@ export function FloatingBar({ className }: { className?: string }) {
           sectionEndFound: Boolean(sectionEndEl),
           s2Progress: s2,
           endProgress: end,
-          visible: isPositive(s2) && !isNearlyOne(end),
+          visible: shouldShow,
+          END_HIDE_THRESHOLD,
         });
       }
     };
 
     update();
 
-    const unsub1 = s2Progress.on("change", update);
-    const unsub2 = endProgress.on("change", update);
+    const updateTwice = () => {
+      update();
+      requestAnimationFrame(update);
+    };
+
+    const unsub1 = s2Progress.on("change", updateTwice);
+    const unsub2 = endProgress.on("change", updateTwice);
     return () => {
       unsub1();
       unsub2();
