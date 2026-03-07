@@ -14,11 +14,7 @@ interface IconProps extends React.SVGProps<SVGSVGElement> {
   titleId?: string;
 }
 
-export const CopilotWordmark: React.FC<IconProps> = ({
-  title,
-  titleId,
-  ...props
-}) => (
+export const CopilotWordmark: React.FC<IconProps> = ({ title, titleId, ...props }) => (
   <svg
     viewBox="0 0 146 72"
     fill="none"
@@ -98,11 +94,7 @@ export const CopilotWordmark: React.FC<IconProps> = ({
 
 // ===================== Copilot Tasks Logo (Footer / Floating Bar) =====================
 
-export const CopilotTasksLogo: React.FC<IconProps> = ({
-  title,
-  titleId,
-  ...props
-}) => (
+export const CopilotTasksLogo: React.FC<IconProps> = ({ title, titleId, ...props }) => (
   <svg
     viewBox="0 0 782 120"
     fill="none"
@@ -169,11 +161,7 @@ export const CopilotTasksLogo: React.FC<IconProps> = ({
 
 // ===================== Chevron Down (Scroll Indicator) =====================
 
-export const ChevronDownIcon: React.FC<IconProps> = ({
-  title,
-  titleId,
-  ...props
-}) => (
+export const ChevronDownIcon: React.FC<IconProps> = ({ title, titleId, ...props }) => (
   <svg
     viewBox="0 0 24 24"
     fill="none"

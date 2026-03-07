@@ -18,19 +18,11 @@ import { cn } from "@/lib/utils";
 import { useTranslation } from "@/lib/i18n";
 import { useReducedMotion } from "@/lib/hooks";
 import { defaultEasing } from "@/lib/easing";
-import {
-  SCROLL_KEYFRAMES as K,
-  CONTENT_MAX_WIDTH,
-  LAYOUT_CONFIG,
-} from "../constants";
+import { SCROLL_KEYFRAMES as K, CONTENT_MAX_WIDTH, LAYOUT_CONFIG } from "../constants";
 import { useSectionContext } from "../context/SectionContext";
 import { useLenisScrollContext } from "../context/LenisScrollContext";
 import { RolodexItem } from "../components/RolodexItem";
-import {
-  getRolodexItems,
-  getDiagonalIndex,
-  getMaxDiagonalIndex,
-} from "../data/rolodex-items";
+import { getRolodexItems, getDiagonalIndex, getMaxDiagonalIndex } from "../data/rolodex-items";
 import { useRolodexAnimation } from "../hooks/useRolodexAnimation";
 import { useOverflowDetection } from "../hooks/useOverflowDetection";
 import { useScrollProgress } from "../hooks/useScrollProgress";
@@ -73,10 +65,7 @@ export function Section2({ sectionRef: externalSectionRef }: Section2Props) {
   const progress = isNarrow ? autoProgress : sectionProgress;
 
   // Exit scroll: tracks when section end passes through viewport
-  const exitOffset = useMemo<[string, string]>(
-    () => ["end start", "end end"],
-    [],
-  );
+  const exitOffset = useMemo<[string, string]>(() => ["end start", "end end"], []);
   const { scrollYProgress: exitProgress } = useScrollProgress({
     target: sectionRef,
     offset: exitOffset,
@@ -96,17 +85,11 @@ export function Section2({ sectionRef: externalSectionRef }: Section2Props) {
   // Row groups
   const rowCount = layout === "5-line" ? 5 : 3;
   const rows = useMemo(
-    () =>
-      Array.from({ length: rowCount }, (_, i) =>
-        items.filter((item) => item.row === i),
-      ),
+    () => Array.from({ length: rowCount }, (_, i) => items.filter((item) => item.row === i)),
     [rowCount, items],
   );
   const referenceRows = useMemo(
-    () =>
-      Array.from({ length: 3 }, (_, i) =>
-        referenceItems.filter((item) => item.row === i),
-      ),
+    () => Array.from({ length: 3 }, (_, i) => referenceItems.filter((item) => item.row === i)),
     [referenceItems],
   );
 
@@ -119,12 +102,10 @@ export function Section2({ sectionRef: externalSectionRef }: Section2Props) {
     [0.95, 1, 1, 0.95],
     { clamp: true, ease: defaultEasing },
   );
-  const yOffsetAnim = useTransform(
-    progress,
-    [K.INTRO_START, K.ROLODEX_1_START],
-    [10, 0],
-    { clamp: true, ease: defaultEasing },
-  );
+  const yOffsetAnim = useTransform(progress, [K.INTRO_START, K.ROLODEX_1_START], [10, 0], {
+    clamp: true,
+    ease: defaultEasing,
+  });
   const opacityAnim = useTransform(
     progress,
     [K.INTRO_START, K.INTRO_END, K.SCALE_PREP_END, K.SCALE_END],
@@ -137,12 +118,10 @@ export function Section2({ sectionRef: externalSectionRef }: Section2Props) {
     ["blur(10px)", "blur(0px)", "blur(0px)", "blur(0px)"],
     { clamp: false, ease: defaultEasing },
   );
-  const introOpacityAnim = useTransform(
-    progress,
-    [K.HOLD_3_START, K.HOLD_3_END],
-    [1, 0],
-    { clamp: true, ease: defaultEasing },
-  );
+  const introOpacityAnim = useTransform(progress, [K.HOLD_3_START, K.HOLD_3_END], [1, 0], {
+    clamp: true,
+    ease: defaultEasing,
+  });
   const introVisibilityAnim = useTransform(
     progress,
     [K.HOLD_3_END - 0.001, K.HOLD_3_END],
@@ -242,12 +221,10 @@ export function Section2({ sectionRef: externalSectionRef }: Section2Props) {
     [1, 0],
     { clamp: true, ease: defaultEasing },
   );
-  const exitYAnim = useTransform(
-    exitProgress,
-    [0, 1],
-    [0, centerOffset / 2],
-    { clamp: true, ease: defaultEasing },
-  );
+  const exitYAnim = useTransform(exitProgress, [0, 1], [0, centerOffset / 2], {
+    clamp: true,
+    ease: defaultEasing,
+  });
 
   const finalBgScale = shouldReduceMotion ? staticOne : bgSquircleScaleAnim;
   const finalBgOpacity = shouldReduceMotion ? staticOne : bgSquircleOpacityAnim;
@@ -258,7 +235,7 @@ export function Section2({ sectionRef: externalSectionRef }: Section2Props) {
     <motion.div
       ref={containerRef}
       className={cn(
-        "mb-24 flex items-center justify-center bg-background-250 px-4 pt-12 sm:bg-transparent sm:px-8 md:py-0",
+        "bg-background-250 mb-24 flex items-center justify-center px-4 pt-12 sm:bg-transparent sm:px-8 md:py-0",
         sticky ? "sticky top-0" : "relative",
       )}
       style={{
@@ -268,7 +245,7 @@ export function Section2({ sectionRef: externalSectionRef }: Section2Props) {
       {/* Dark background layer - only when NOT narrow */}
       {!isNarrow && (
         <motion.div
-          className="absolute inset-0 bg-[#423B3E] will-change-[opacity] dark:bg-background-150"
+          className="dark:bg-background-150 absolute inset-0 bg-[#423B3E] will-change-[opacity]"
           style={{ opacity: finalDarkOpacity }}
         />
       )}
@@ -282,7 +259,7 @@ export function Section2({ sectionRef: externalSectionRef }: Section2Props) {
         <motion.div
           ref={squircleRef}
           className={cn(
-            "pointer-events-none absolute size-full bg-[#423B3E] will-change-[transform,opacity] squircle-24 dark:bg-background-150 md:squircle-48",
+            "squircle-24 dark:bg-background-150 md:squircle-48 pointer-events-none absolute size-full bg-[#423B3E] will-change-[transform,opacity]",
             CONTENT_MAX_WIDTH,
           )}
           style={{
@@ -295,7 +272,7 @@ export function Section2({ sectionRef: externalSectionRef }: Section2Props) {
         <motion.div
           ref={contentRef}
           className={cn(
-            "relative max-w-full p-6 pb-20 pt-16 will-change-[transform,opacity,filter] md:py-14",
+            "relative max-w-full p-6 pt-16 pb-20 will-change-[transform,opacity,filter] md:py-14",
             CONTENT_TEXT_CLASSES,
           )}
           style={{
@@ -309,17 +286,15 @@ export function Section2({ sectionRef: externalSectionRef }: Section2Props) {
           {/* Intro text */}
           <motion.div
             className={cn(
-              "mb-10 flex justify-start ps-1 text-md md:mb-0 md:h-0 lg:ps-2 lg:text-lg",
-              "[@media(max-height:720px)]:ps-1 [@media(max-height:720px)]:text-md",
+              "text-md mb-10 flex justify-start ps-1 md:mb-0 md:h-0 lg:ps-2 lg:text-lg",
+              "[@media(max-height:720px)]:text-md [@media(max-height:720px)]:ps-1",
             )}
             style={{
               opacity: introOpacity,
               visibility: introVisibility as any,
             }}
           >
-            <div className="relative md:bottom-12">
-              {t("tasks.waitList.section2.introText")}
-            </div>
+            <div className="relative md:bottom-12">{t("tasks.waitList.section2.introText")}</div>
           </motion.div>
 
           {/* Row-based items */}
@@ -356,16 +331,12 @@ export function Section2({ sectionRef: externalSectionRef }: Section2Props) {
             aria-pressed={isPaused}
             onClick={() => setIsPaused((p) => !p)}
             className={cn(
-              "pointer-events-auto absolute bottom-4 end-4 flex size-8 items-center justify-center rounded-full",
+              "pointer-events-auto absolute end-4 bottom-4 flex size-8 items-center justify-center rounded-full",
               "bg-white/10 text-white backdrop-blur-sm transition-colors hover:bg-white/20",
               "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white",
             )}
           >
-            {isPaused ? (
-              <PlayIcon className="size-4" />
-            ) : (
-              <PauseIcon className="size-4" />
-            )}
+            {isPaused ? <PlayIcon className="size-4" /> : <PauseIcon className="size-4" />}
           </button>
         )}
       </motion.div>
@@ -375,13 +346,7 @@ export function Section2({ sectionRef: externalSectionRef }: Section2Props) {
         className="pointer-events-none invisible absolute inset-0 flex items-center justify-center"
         aria-hidden="true"
       >
-        <div
-          ref={refContentRef}
-          className={cn(
-            "max-w-full p-6 py-14",
-            CONTENT_TEXT_CLASSES,
-          )}
-        >
+        <div ref={refContentRef} className={cn("max-w-full p-6 py-14", CONTENT_TEXT_CLASSES)}>
           {referenceRows.map((row, rowIdx) => (
             <div key={rowIdx} className="mb-2">
               {row.map((item, itemIdx) => (
@@ -413,10 +378,7 @@ function prepareItems(layout: RolodexLayout): RolodexItemWithStagger[] {
 
   return rawItems.map((item) => ({
     ...item,
-    diagonalStagger:
-      maxDiagonal > 0
-        ? getDiagonalIndex(item.row, item.col) / maxDiagonal
-        : 0,
+    diagonalStagger: maxDiagonal > 0 ? getDiagonalIndex(item.row, item.col) / maxDiagonal : 0,
   }));
 }
 

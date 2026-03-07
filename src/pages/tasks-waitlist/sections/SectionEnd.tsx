@@ -5,10 +5,9 @@
  * a closing headline, and the final waitlist CTA button.
  */
 
-import React, { useRef, useState, useEffect } from "react";
+import { useRef, useState } from "react";
 import { cn } from "@/lib/utils";
 import { useTranslation } from "@/lib/i18n";
-import { useMotionValue } from "framer-motion";
 import { CONTENT_MAX_WIDTH } from "../constants";
 import { CopilotTasksLogo } from "../icons";
 import { WaitlistButton } from "../components/WaitlistButton";
@@ -36,17 +35,14 @@ export function SectionEnd() {
   return (
     <div
       ref={ref}
-      className="flex justify-center bg-background-150 px-4 dark:bg-background-250 sm:px-8"
+      className="bg-background-150 dark:bg-background-250 flex justify-center px-4 sm:px-8"
     >
       <div
-        className={cn(
-          "flex w-full flex-col items-center gap-12 py-4 sm:pb-12",
-          CONTENT_MAX_WIDTH,
-        )}
+        className={cn("flex w-full flex-col items-center gap-12 py-4 sm:pb-12", CONTENT_MAX_WIDTH)}
       >
         {/* Dark card */}
-        <div className="relative mt-8 flex h-[max(50vh,500px)] w-full flex-col items-center bg-background-800 px-4 squircle-24 dark:bg-background-100 sm:-mt-22 sm:px-8">
-          <div className="relative flex size-full flex-col items-center justify-center gap-8 p-5 text-foreground-250 dark:text-foreground-650 md:gap-10">
+        <div className="bg-background-800 squircle-24 dark:bg-background-100 relative mt-8 flex h-[max(50vh,500px)] w-full flex-col items-center px-4 sm:-mt-22 sm:px-8">
+          <div className="text-foreground-250 dark:text-foreground-650 relative flex size-full flex-col items-center justify-center gap-8 p-5 md:gap-10">
             {/* Headline */}
             <div className="px-8 text-center text-xl sm:text-3xl md:text-4xl">
               {t("tasks.waitList.sectionEnd.headline")}

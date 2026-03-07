@@ -28,15 +28,13 @@ export function LazyImage({ src, alt, className, style }: LazyImageProps) {
 
   // No source or load error: show skeleton
   if (!src || hasError) {
-    return <div className={cn(className, "animate-pulse bg-background-200")} />;
+    return <div className={cn(className, "bg-background-200 animate-pulse")} />;
   }
 
   return (
     <>
       {/* Skeleton placeholder while loading */}
-      {!isLoaded && (
-        <div className={cn(className, "animate-pulse bg-background-200")} />
-      )}
+      {!isLoaded && <div className={cn(className, "bg-background-200 animate-pulse")} />}
 
       <img
         src={src}
@@ -69,14 +67,14 @@ export function MotionImage({ src, alt, className, style }: MotionImageProps) {
 
   // No source or load error: show skeleton
   if (!src || hasError) {
-    return <div className={cn(className, "animate-pulse bg-background-200")} />;
+    return <div className={cn(className, "bg-background-200 animate-pulse")} />;
   }
 
   // Still loading: show skeleton + hidden img for load detection
   if (!isLoaded) {
     return (
       <>
-        <div className={cn(className, "animate-pulse bg-background-200")} />
+        <div className={cn(className, "bg-background-200 animate-pulse")} />
         <motion.img
           src={src}
           alt={alt}

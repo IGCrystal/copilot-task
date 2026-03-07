@@ -152,12 +152,9 @@ function AnimatedFlipText({
   });
 
   // Reset transition (narrow only): content3 -> content1 (rotate 0 -> 180)
-  const rotateReset = useTransform(
-    scrollProgress,
-    [resetStart, resetEnd],
-    [0, 180],
-    { clamp: true },
-  );
+  const rotateReset = useTransform(scrollProgress, [resetStart, resetEnd], [0, 180], {
+    clamp: true,
+  });
 
   // Visibility state machine:
   // 1 = showing content1 (pre-flip or during flip1)
@@ -173,27 +170,14 @@ function AnimatedFlipText({
     return 5;
   });
 
-  const vis1 = useTransform(visState, (s: number) =>
-    s === 1 ? "visible" : "hidden",
-  );
-  const vis2 = useTransform(visState, (s: number) =>
-    s === 2 ? "visible" : "hidden",
-  );
-  const vis3 = useTransform(visState, (s: number) =>
-    s === 3 ? "visible" : "hidden",
-  );
-  const vis4 = useTransform(visState, (s: number) =>
-    s === 4 ? "visible" : "hidden",
-  );
-  const vis5 = useTransform(visState, (s: number) =>
-    s === 5 ? "visible" : "hidden",
-  );
+  const vis1 = useTransform(visState, (s: number) => (s === 1 ? "visible" : "hidden"));
+  const vis2 = useTransform(visState, (s: number) => (s === 2 ? "visible" : "hidden"));
+  const vis3 = useTransform(visState, (s: number) => (s === 3 ? "visible" : "hidden"));
+  const vis4 = useTransform(visState, (s: number) => (s === 4 ? "visible" : "hidden"));
+  const vis5 = useTransform(visState, (s: number) => (s === 5 ? "visible" : "hidden"));
 
   return (
-    <span
-      className="relative inline-flex flex-col"
-      style={{ perspective: "1000px" }}
-    >
+    <span className="relative inline-flex flex-col" style={{ perspective: "1000px" }}>
       {/* Invisible measurement layer to reserve max width */}
       <span className="invisible flex h-0 flex-col" aria-hidden="true">
         <span>{content1}</span>
@@ -212,10 +196,7 @@ function AnimatedFlipText({
             pointerEvents: "none",
           }}
         >
-          <motion.span
-            className="inline-block"
-            style={{ backfaceVisibility: "hidden" }}
-          >
+          <motion.span className="inline-block" style={{ backfaceVisibility: "hidden" }}>
             <span>{content1}</span>
           </motion.span>
           <motion.span

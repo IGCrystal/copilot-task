@@ -8,24 +8,20 @@ export default {
     extend: {
       colors: {
         background: Object.fromEntries(
-          [100,150,200,250,300,350,400,450,550,600,650,700,750,800,850,900].map(
-            (n) => [n, `rgb(var(--color-background-${n}) / <alpha-value>)`]
-          )
+          [100, 150, 200, 250, 300, 350, 400, 450, 550, 600, 650, 700, 750, 800, 850, 900].map(
+            (n) => [n, `rgb(var(--color-background-${n}) / <alpha-value>)`],
+          ),
         ),
         foreground: Object.fromEntries(
-          [100,150,200,250,300,350,400,450,550,600,650,700,750,800,850,900].map(
-            (n) => [n, `rgb(var(--color-foreground-${n}) / <alpha-value>)`]
-          )
+          [100, 150, 200, 250, 300, 350, 400, 450, 550, 600, 650, 700, 750, 800, 850, 900].map(
+            (n) => [n, `rgb(var(--color-foreground-${n}) / <alpha-value>)`],
+          ),
         ),
         stroke: Object.fromEntries(
-          [250,300,450,900].map(
-            (n) => [n, `rgb(var(--color-stroke-${n}) / <alpha-value>)`]
-          )
+          [250, 300, 450, 900].map((n) => [n, `rgb(var(--color-stroke-${n}) / <alpha-value>)`]),
         ),
         accent: Object.fromEntries(
-          [100].map(
-            (n) => [n, `rgb(var(--color-accent-${n}) / <alpha-value>)`]
-          )
+          [100].map((n) => [n, `rgb(var(--color-accent-${n}) / <alpha-value>)`]),
         ),
       },
       fontFamily: {
@@ -54,7 +50,5 @@ export default {
       },
     },
   },
-  plugins: [
-    containerQueries,
-  ],
+  plugins: [containerQueries],
 };

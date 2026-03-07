@@ -3,10 +3,7 @@
  * Returns mock responses for waitlist API calls.
  */
 
-export async function fetchApi(
-  url: string,
-  options?: RequestInit,
-): Promise<Response> {
+export async function fetchApi(url: string, options?: RequestInit): Promise<Response> {
   console.log(`[mock fetch] ${options?.method ?? "GET"} ${url}`);
 
   // Simulate network delay

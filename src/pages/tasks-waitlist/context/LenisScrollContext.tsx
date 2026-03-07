@@ -18,9 +18,7 @@ const LenisScrollContext = createContext<LenisScrollContextValue | null>(null);
 export function useLenisScrollContext(): LenisScrollContextValue {
   const context = useContext(LenisScrollContext);
   if (!context) {
-    throw new Error(
-      "useLenisScrollContext must be used within a LenisScrollProvider",
-    );
+    throw new Error("useLenisScrollContext must be used within a LenisScrollProvider");
   }
   return context;
 }
@@ -58,20 +56,8 @@ export function LenisScrollProvider({
       viewportWidth,
       isNarrow,
     }),
-    [
-      lenisScroll,
-      lenisProgress,
-      lenis,
-      lenisDirection,
-      viewportHeight,
-      viewportWidth,
-      isNarrow,
-    ],
+    [lenisScroll, lenisProgress, lenis, lenisDirection, viewportHeight, viewportWidth, isNarrow],
   );
 
-  return (
-    <LenisScrollContext.Provider value={value}>
-      {children}
-    </LenisScrollContext.Provider>
-  );
+  return <LenisScrollContext.Provider value={value}>{children}</LenisScrollContext.Provider>;
 }

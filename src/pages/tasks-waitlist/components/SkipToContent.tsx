@@ -44,17 +44,13 @@ export function SkipToContent() {
 
   /** Scroll to Section 2 when the skip link is activated */
   function scrollToContent() {
-    const section2 = document.querySelector<HTMLElement>(
-      '[data-section-id="section-2"]',
-    );
+    const section2 = document.querySelector<HTMLElement>('[data-section-id="section-2"]');
     if (!section2) return;
 
     let targetScroll: number;
 
     if (isNarrow) {
-      targetScroll =
-        section2.getBoundingClientRect().top +
-        window.scrollY;
+      targetScroll = section2.getBoundingClientRect().top + window.scrollY;
     } else {
       const viewportHeight = window.innerHeight - HEADER_HEIGHT_OFFSET;
       const section1Multiplier =
@@ -81,8 +77,8 @@ export function SkipToContent() {
       className={cn(
         "sr-only focus:not-sr-only",
         "focus:absolute focus:start-6 focus:top-44 focus:z-50 md:focus:start-12 md:focus:top-40",
-        "focus:rounded-full focus:bg-background-100 focus:px-4 focus:py-2 focus:text-foreground-900",
-        "focus:outline focus:outline-2 focus:outline-offset-2 focus:outline-accent-100",
+        "focus:bg-background-100 focus:text-foreground-900 focus:rounded-full focus:px-4 focus:py-2",
+        "focus:outline-accent-100 focus:outline focus:outline-2 focus:outline-offset-2",
       )}
       onClick={(e) => {
         e.preventDefault();

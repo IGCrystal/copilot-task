@@ -45,7 +45,7 @@ const SECTION_COMPONENT_MAP: Record<string, React.ComponentType> = {
 export default function TasksWaitlistPage() {
   const wrapperRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
-  const sectionRefs = useRef<Record<string, React.RefObject<HTMLElement>>>({});
+  const sectionRefs = useRef<Record<string, React.RefObject<HTMLElement | null>>>({});
 
   // Viewport measurement
   const [viewportSize, setViewportSize] = useState(() => ({
@@ -60,17 +60,11 @@ export default function TasksWaitlistPage() {
     const params = new URLSearchParams(window.location.search);
     const viewport = params.get("viewport");
 
-    return viewport === "wide" || viewport === "narrow"
-      ? viewport
-      : null;
+    return viewport === "wide" || viewport === "narrow" ? viewport : null;
   }, []);
 
   const isNarrow =
-    viewportOverride === "wide"
-      ? false
-      : viewportOverride === "narrow"
-        ? true
-        : mediaIsNarrow;
+    viewportOverride === "wide" ? false : viewportOverride === "narrow" ? true : mediaIsNarrow;
 
   useEffect(() => {
     const handleResize = () => {
@@ -96,10 +90,7 @@ export default function TasksWaitlistPage() {
   }, []);
 
   // Filter out hidden sections
-  const visibleSections = useMemo(
-    () => SECTION_CONFIGS.filter((config) => !config.hidden),
-    [],
-  );
+  const visibleSections = useMemo(() => SECTION_CONFIGS.filter((config) => !config.hidden), []);
 
   const getSectionRef = (sectionId: string) => {
     if (!sectionRefs.current[sectionId]) {
@@ -109,57 +100,55 @@ export default function TasksWaitlistPage() {
   };
 
   return (
-      <div className="relative size-full transform-gpu overflow-hidden md:rounded-container">
-        <div
-          ref={wrapperRef}
-          className="absolute inset-0 overflow-y-auto overflow-x-hidden bg-background-250"
+    <div className="md:rounded-container relative size-full transform-gpu overflow-hidden">
+      <div
+        ref={wrapperRef}
+        className="bg-background-250 absolute inset-0 overflow-x-hidden overflow-y-auto"
+      >
+        <LenisScrollProvider
+          lenisScroll={scroll}
+          lenisProgress={progress}
+          lenis={lenis}
+          lenisDirection={direction}
+          viewportHeight={viewportSize.height}
+          viewportWidth={viewportSize.width}
+          isNarrow={isNarrow}
         >
-          <LenisScrollProvider
-            lenisScroll={scroll}
-            lenisProgress={progress}
-            lenis={lenis}
-            lenisDirection={direction}
-            viewportHeight={viewportSize.height}
-            viewportWidth={viewportSize.width}
-            isNarrow={isNarrow}
+          <main
+            id="storyboard-main"
+            ref={contentRef}
+            tabIndex={-1}
+            className="relative min-h-full min-w-full outline-none"
           >
-            <main
-              id="storyboard-main"
-              ref={contentRef}
-              tabIndex={-1}
-              className="relative min-h-full min-w-full outline-none"
-            >
-              <SkipToContent />
+            <SkipToContent />
 
-              {visibleSections.map((config) => {
-                const SectionContent = SECTION_COMPONENT_MAP[config.id] as React.ComponentType<any>;
-                if (!SectionContent) return null;
+            {visibleSections.map((config) => {
+              const SectionContent = SECTION_COMPONENT_MAP[config.id] as React.ComponentType<any>;
+              if (!SectionContent) return null;
 
-                const sectionRef = getSectionRef(config.id);
-                const sectionContentProps =
-                  config.id === "section-1" || config.id === "section-2"
-                    ? { sectionRef }
-                    : {};
+              const sectionRef = getSectionRef(config.id);
+              const sectionContentProps =
+                config.id === "section-1" || config.id === "section-2" ? { sectionRef } : {};
 
-                return (
-                  <Section
-                    key={config.id}
-                    ref={sectionRef}
-                    sectionId={config.id}
-                    heightMultiplier={config.heightMultiplier}
-                    enableScrollProgress={config.enableScrollProgress}
-                    scrollTrackingEdge={config.scrollTrackingEdge}
-                    className={config.className}
-                  >
-                    <SectionContent {...sectionContentProps} />
-                  </Section>
-                );
-              })}
-            </main>
+              return (
+                <Section
+                  key={config.id}
+                  ref={sectionRef}
+                  sectionId={config.id}
+                  heightMultiplier={config.heightMultiplier}
+                  enableScrollProgress={config.enableScrollProgress}
+                  scrollTrackingEdge={config.scrollTrackingEdge}
+                  className={config.className}
+                >
+                  <SectionContent {...sectionContentProps} />
+                </Section>
+              );
+            })}
+          </main>
 
-            <FloatingBar />
-          </LenisScrollProvider>
-        </div>
+          <FloatingBar />
+        </LenisScrollProvider>
       </div>
+    </div>
   );
 }

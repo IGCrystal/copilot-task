@@ -9,20 +9,14 @@
 import { useEffect, useRef } from "react";
 import { useMotionValue } from "framer-motion";
 import type { MotionValue } from "framer-motion";
-import {
-  SCROLL_KEYFRAMES as K,
-  STAGGER_CONFIG,
-  ANIMATION_TIMING,
-} from "../constants";
+import { SCROLL_KEYFRAMES as K, STAGGER_CONFIG, ANIMATION_TIMING } from "../constants";
 
 interface UseRolodexAnimationOptions {
   /** When true, the animation loop is paused */
   paused?: boolean;
 }
 
-export function useRolodexAnimation(
-  options: UseRolodexAnimationOptions = {},
-): MotionValue<number> {
+export function useRolodexAnimation(options: UseRolodexAnimationOptions = {}): MotionValue<number> {
   const { paused = false } = options;
   const animationProgress = useMotionValue<number>(K.INTRO_END);
   const elapsedRef = useRef(0);

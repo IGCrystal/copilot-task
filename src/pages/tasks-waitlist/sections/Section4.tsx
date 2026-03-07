@@ -18,11 +18,7 @@ import { useTranslation } from "@/lib/i18n";
 import { useThemeValue } from "@/lib/theme";
 import { useReducedMotion } from "@/lib/hooks";
 import { defaultEasing } from "@/lib/easing";
-import {
-  CAROUSEL_KEYFRAMES as CK,
-  IMAGE_BORDER_RADIUS,
-  WIDE_MAX_WIDTH,
-} from "../constants";
+import { CAROUSEL_KEYFRAMES as CK, IMAGE_BORDER_RADIUS, WIDE_MAX_WIDTH } from "../constants";
 import { CAROUSEL_IMAGES, IMAGE_ANIMATION_CONFIGS } from "../data/carousel-configs";
 import { useSectionContext } from "../context/SectionContext";
 import { useLenisScrollContext } from "../context/LenisScrollContext";
@@ -41,17 +37,9 @@ export function Section4() {
     <StickyContainer
       sticky={sticky}
       height={isNarrow ? "auto" : "viewport"}
-      className={
-        isNarrow
-          ? "pb-4 pt-16"
-          : "overflow-hidden p-4 pb-[90px] sm:p-8 sm:pb-[126px]"
-      }
+      className={isNarrow ? "pt-16 pb-4" : "overflow-hidden p-4 pb-[90px] sm:p-8 sm:pb-[126px]"}
     >
-      {isNarrow ? (
-        <NarrowCarousel />
-      ) : (
-        <WideCarousel scrollYProgress={scrollYProgress} />
-      )}
+      {isNarrow ? <NarrowCarousel /> : <WideCarousel scrollYProgress={scrollYProgress} />}
     </StickyContainer>
   );
 }
@@ -122,10 +110,7 @@ function WideCarousel({ scrollYProgress }: WideCarouselProps) {
 
   // Precompute image URLs based on theme
   const imageSrcs = useMemo(
-    () =>
-      CAROUSEL_IMAGES.map((img) =>
-        theme === "dark" ? img.srcDark : img.srcLight,
-      ),
+    () => CAROUSEL_IMAGES.map((img) => (theme === "dark" ? img.srcDark : img.srcLight)),
     [theme],
   );
 
@@ -186,17 +171,14 @@ function WideCarousel({ scrollYProgress }: WideCarouselProps) {
     <>
       {/* Background overlay */}
       <motion.div
-        className="absolute inset-0 bg-background-150 will-change-[opacity] dark:bg-background-250"
+        className="bg-background-150 dark:bg-background-250 absolute inset-0 will-change-[opacity]"
         style={{ opacity: bgOpacity }}
       />
 
       <div className="relative flex size-full items-center justify-center">
         <div
           ref={containerRef}
-          className={cn(
-            "absolute grid size-full grid-cols-16 grid-rows-3 gap-6",
-            WIDE_MAX_WIDTH,
-          )}
+          className={cn("absolute grid size-full grid-cols-16 grid-rows-3 gap-6", WIDE_MAX_WIDTH)}
         >
           {/* Invisible reference elements for position measurement */}
           <div
@@ -296,15 +278,10 @@ function ImageOverlay({
   const innerScaleInputs = config.exitScaleRange
     ? [config.innerScaleRange[0], config.innerScaleRange[1], exitRange[0], exitRange[1]]
     : [config.innerScaleRange[0], config.innerScaleRange[1], 1];
-  const innerScaleOutputs = config.exitScaleRange
-    ? [0, 1, 1, 0]
-    : [0, 1, 1];
-  const innerScale = useTransform(
-    scrollYProgress,
-    innerScaleInputs,
-    innerScaleOutputs,
-    { ease: defaultEasing },
-  );
+  const innerScaleOutputs = config.exitScaleRange ? [0, 1, 1, 0] : [0, 1, 1];
+  const innerScale = useTransform(scrollYProgress, innerScaleInputs, innerScaleOutputs, {
+    ease: defaultEasing,
+  });
 
   // Opacity
   const opacityOutputs = disableIntroOpacity ? [1, 1, 1, 0] : [0, 1, 1, 0];
@@ -321,8 +298,12 @@ function ImageOverlay({
       ? [config.innerScaleRange[0], config.innerScaleRange[1], exitRange[0], exitRange[1]]
       : [config.innerScaleRange[0], config.innerScaleRange[1]],
     config.exitScaleRange
-      ? (disableIntroOpacity ? [1, 1, 1, 0] : [0, 1, 1, 0])
-      : (disableIntroOpacity ? [1, 1] : [0, 1]),
+      ? disableIntroOpacity
+        ? [1, 1, 1, 0]
+        : [0, 1, 1, 0]
+      : disableIntroOpacity
+        ? [1, 1]
+        : [0, 1],
     { ease: defaultEasing },
   );
 
@@ -362,9 +343,7 @@ function ImageOverlay({
     const computeOrigin = (p: number) => {
       if (!config.exitScaleRange) return initialOrigin;
       const exitStart = config.exitScaleRange[0];
-      return p < exitStart
-        ? initialOrigin
-        : "origin-top-left rtl:origin-top-right";
+      return p < exitStart ? initialOrigin : "origin-top-left rtl:origin-top-right";
     };
 
     // Sync once after mount
@@ -386,16 +365,13 @@ function ImageOverlay({
   const imageScaleTransform = useMotionTemplate`scale(${imageScale})`;
 
   // Dynamic border radius: IMAGE_BORDER_RADIUS / (positionScale * innerScale)
-  const dynamicBorderRadius = useTransform(
-    [scale, innerScale],
-    (latest: number[]) => {
-      const s = latest[0] ?? 1;
-      const is = latest[1] ?? 1;
-      const combined = s * is;
-      if (combined < 0.01) return 0;
-      return Math.min(Math.max(IMAGE_BORDER_RADIUS / combined, 0), 200);
-    },
-  );
+  const dynamicBorderRadius = useTransform([scale, innerScale], (latest: number[]) => {
+    const s = latest[0] ?? 1;
+    const is = latest[1] ?? 1;
+    const combined = s * is;
+    if (combined < 0.01) return 0;
+    return Math.min(Math.max(IMAGE_BORDER_RADIUS / combined, 0), 200);
+  });
   const borderRadiusPx = useMotionTemplate`${dynamicBorderRadius}px`;
 
   return (
@@ -417,7 +393,7 @@ function ImageOverlay({
       >
         <motion.div
           className={cn(
-            "relative size-full overflow-hidden bg-background-400/20 will-change-transform",
+            "bg-background-400/20 relative size-full overflow-hidden will-change-transform",
             !isLoaded && "animate-pulse",
             transformOrigin,
           )}
@@ -480,17 +456,15 @@ function TextOverlay({
   return (
     <motion.div
       className={cn(
-        "z-40 flex flex-col gap-3 [grid-column:11/17] [grid-row:2]",
+        "z-40 [grid-column:11/17] [grid-row:2] flex flex-col gap-3",
         "[@media(min-width:1024px)]:[grid-column:13/17]",
-        "[@media(max-height:800px)]:pt-6 [@media(max-height:800px)]:[grid-row:1]",
+        "[@media(max-height:800px)]:[grid-row:1] [@media(max-height:800px)]:pt-6",
         "will-change-[opacity]",
       )}
       style={{ opacity }}
     >
-      <div className="max-w-4xl text-foreground-800 text-lg-medium">
-        {headline}
-      </div>
-      <div className="max-w-4xl text-foreground-450 text-base-dense dark:text-foreground-650">
+      <div className="text-foreground-800 text-lg-medium max-w-4xl">{headline}</div>
+      <div className="text-foreground-450 text-base-dense dark:text-foreground-650 max-w-4xl">
         {description}
       </div>
     </motion.div>
@@ -504,20 +478,17 @@ function NarrowCarousel() {
   const theme = useThemeValue();
 
   const imageSrcs = useMemo(
-    () =>
-      CAROUSEL_IMAGES.map((img) =>
-        theme === "dark" ? img.srcDark : img.srcLight,
-      ),
+    () => CAROUSEL_IMAGES.map((img) => (theme === "dark" ? img.srcDark : img.srcLight)),
     [theme],
   );
 
   return (
     <>
       {/* Background overlay */}
-      <div className="absolute inset-0 bg-background-150 dark:bg-background-250" />
+      <div className="bg-background-150 dark:bg-background-250 absolute inset-0" />
 
       {/* Top gradient */}
-      <div className="absolute top-0 h-64 w-full bg-gradient-to-b from-background-250 to-transparent" />
+      <div className="from-background-250 absolute top-0 h-64 w-full bg-gradient-to-b to-transparent" />
 
       <div className="relative flex flex-col gap-16 px-4">
         {CAROUSEL_IMAGES.map((image, index) => (
@@ -557,20 +528,15 @@ function NarrowCard({
   const cardScale = useTransform(scrollYProgress, [0, 1], [0.75, 1]);
 
   return (
-    <div
-      ref={cardRef}
-      className="grid grid-cols-6 grid-rows-[1fr_auto] gap-y-6"
-    >
+    <div ref={cardRef} className="grid grid-cols-6 grid-rows-[1fr_auto] gap-y-6">
       <motion.img
         src={src}
         alt={t(altKey)}
-        className="aspect-square w-full origin-bottom object-cover squircle-24 [grid-column:1/7] [grid-row:1]"
+        className="squircle-24 [grid-column:1/7] [grid-row:1] aspect-square w-full origin-bottom object-cover"
         style={{ scale: cardScale }}
       />
-      <div className="flex flex-col gap-2 [grid-column:1/7] [grid-row:2]">
-        <div className="text-foreground-800 text-lg-medium">
-          {t(headlineKey)}
-        </div>
+      <div className="[grid-column:1/7] [grid-row:2] flex flex-col gap-2">
+        <div className="text-foreground-800 text-lg-medium">{t(headlineKey)}</div>
         <div className="text-foreground-600 text-base-dense dark:text-foreground-650">
           {t(descriptionKey)}
         </div>
@@ -578,4 +544,3 @@ function NarrowCard({
     </div>
   );
 }
-

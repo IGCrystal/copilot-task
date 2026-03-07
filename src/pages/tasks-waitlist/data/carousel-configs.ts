@@ -81,10 +81,7 @@ export const IMAGE_ANIMATION_CONFIGS: ImageAnimationConfig[] = [
     innerScaleRange: [K.PART_1_IMAGE_1_INTRO_START, K.PART_1_IMAGE_1_INTRO_END],
     exitScaleRange: [K.PART_3_TRANSITION_START, K.PART_3_TRANSITION_END],
     zIndexRange: [30, 20],
-    zIndexProgress: [
-      K.PART_2_TRANSITION_START - 0.01,
-      K.PART_2_TRANSITION_START,
-    ],
+    zIndexProgress: [K.PART_2_TRANSITION_START - 0.01, K.PART_2_TRANSITION_START],
   },
 
   // --- Image 2: Starts bottom-right, moves to center, then top-left ---

@@ -24,13 +24,9 @@ async function joinWaitlist(program: string) {
 
 async function getWaitlistStatus(program: string) {
   const encodedProgram = encodeURIComponent(program);
-  const { data } = await fetchApi(
-    `/waitlist/${encodedProgram}/status`,
-    statusResponseSchema,
-    {
-      analytics: { anonymousPath: "/waitlist/{program}/status" },
-    },
-  );
+  const { data } = await fetchApi(`/waitlist/${encodedProgram}/status`, statusResponseSchema, {
+    analytics: { anonymousPath: "/waitlist/{program}/status" },
+  });
   return data;
 }
 

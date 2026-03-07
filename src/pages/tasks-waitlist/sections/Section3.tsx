@@ -37,11 +37,15 @@ export function Section3() {
       sticky={sticky}
       height={isNarrow ? "auto" : "viewport"}
       className={cn(
-        "flex w-full justify-center bg-background-250 px-4 pb-10 sm:px-8 sm:pb-0",
+        "bg-background-250 flex w-full justify-center px-4 pb-10 sm:px-8 sm:pb-0",
         !isNarrow && "size-full",
       )}
     >
-      <Section3Content scrollYProgress={scrollYProgress} isNarrow={isNarrow} sectionRef={sectionRef} />
+      <Section3Content
+        scrollYProgress={scrollYProgress}
+        isNarrow={isNarrow}
+        sectionRef={sectionRef}
+      />
     </StickyContainer>
   );
 }
@@ -89,45 +93,33 @@ function Section3Content({ isNarrow, sectionRef }: Section3ContentProps) {
   const bgOpacity = isNarrowOrReduced ? staticZero : bgOpacityAnimated;
 
   // Header animations
-  const headerOpacityAnimated = useTransform(
-    entryProgress,
-    [0, 0.5],
-    [0, 1],
-    { ease: defaultEasing },
-  );
+  const headerOpacityAnimated = useTransform(entryProgress, [0, 0.5], [0, 1], {
+    ease: defaultEasing,
+  });
   const headerOpacity = isNarrowOrReduced ? staticOne : headerOpacityAnimated;
 
-  const headerScaleAnimated = useTransform(
-    entryProgress,
-    [0, 1],
-    [0.8, 1],
-    { ease: defaultEasing },
-  );
+  const headerScaleAnimated = useTransform(entryProgress, [0, 1], [0.8, 1], {
+    ease: defaultEasing,
+  });
   const headerScale = isNarrowOrReduced ? staticOne : headerScaleAnimated;
 
   // Content squircle opacity & y offset
-  const contentOpacityAnimated = useTransform(
-    entryProgress,
-    [0, 0.5],
-    [0, 1],
-    { ease: defaultEasing },
-  );
+  const contentOpacityAnimated = useTransform(entryProgress, [0, 0.5], [0, 1], {
+    ease: defaultEasing,
+  });
   const contentOpacity = isNarrowOrReduced ? staticOne : contentOpacityAnimated;
 
   const contentYStatic = useMotionValue("0dvh");
-  const contentYAnimated = useTransform(
-    entryProgress,
-    [0.5, 1],
-    ["25dvh", "0dvh"],
-    { ease: defaultEasing },
-  );
+  const contentYAnimated = useTransform(entryProgress, [0.5, 1], ["25dvh", "0dvh"], {
+    ease: defaultEasing,
+  });
   const contentY = isNarrowOrReduced ? contentYStatic : contentYAnimated;
 
   return (
     <>
       {/* Background fade overlay */}
       <motion.div
-        className="absolute inset-0 bg-background-150 will-change-[opacity] dark:bg-background-250"
+        className="bg-background-150 dark:bg-background-250 absolute inset-0 will-change-[opacity]"
         style={{ opacity: bgOpacity }}
       />
 
@@ -151,7 +143,7 @@ function Section3Content({ isNarrow, sectionRef }: Section3ContentProps) {
           <h1 className="text-foreground-900 text-2xl-medium md:text-3xl">
             {t("tasks.waitList.section3.headerHeadline")}
           </h1>
-          <p className="max-w-[95%] text-foreground-700 text-base-dense-medium md:max-w-[70%] md:text-md">
+          <p className="text-foreground-700 text-base-dense-medium md:text-md max-w-[95%] md:max-w-[70%]">
             {t("tasks.waitList.section3.headerSubtitle")}
           </p>
         </motion.div>
@@ -160,18 +152,13 @@ function Section3Content({ isNarrow, sectionRef }: Section3ContentProps) {
         <motion.div
           className={cn(
             isNarrow
-              ? "relative w-full bg-background-200 squircle-24 md:squircle-36"
-              : "sticky top-0 size-full bg-background-200 squircle-24 md:squircle-36",
+              ? "bg-background-200 squircle-24 md:squircle-36 relative w-full"
+              : "bg-background-200 squircle-24 md:squircle-36 sticky top-0 size-full",
             CONTENT_MAX_WIDTH,
           )}
           style={{ opacity: contentOpacity, y: contentY }}
         >
-          <div
-            className={cn(
-              "flex size-full flex-col items-center",
-              isNarrow && "pt-16",
-            )}
-          >
+          <div className={cn("flex size-full flex-col items-center", isNarrow && "pt-16")}>
             {FEATURE_ITEMS.map((feature, index) => (
               <FeatureItem
                 key={index}
@@ -265,36 +252,24 @@ function FeatureItem({
 
   // Indicator circle states
   // State 1: empty border - visible initially, fades at peak
-  const borderOpacity = useTransform(
-    progress,
-    getKeyframes(timingOffsets),
-    [1, 1, 0, 0, 0],
-    { ease: defaultEasing },
-  );
+  const borderOpacity = useTransform(progress, getKeyframes(timingOffsets), [1, 1, 0, 0, 0], {
+    ease: defaultEasing,
+  });
 
   // State 2: white + colored checkmark - active state
-  const activeOpacity = useTransform(
-    progress,
-    getKeyframes(timingOffsets),
-    [0, 0.8, 1, 1, 0],
-    { ease: defaultEasing },
-  );
+  const activeOpacity = useTransform(progress, getKeyframes(timingOffsets), [0, 0.8, 1, 1, 0], {
+    ease: defaultEasing,
+  });
 
   // State 3: bg-300 + muted checkmark - done/past state
-  const doneOpacity = useTransform(
-    progress,
-    getKeyframes(timingOffsets),
-    [0, 0, 0, 0, 0.35],
-    { ease: defaultEasing },
-  );
+  const doneOpacity = useTransform(progress, getKeyframes(timingOffsets), [0, 0, 0, 0, 0.35], {
+    ease: defaultEasing,
+  });
 
   // Content opacity
-  const contentOpacity = useTransform(
-    progress,
-    getKeyframes(timingOffsets),
-    [0.3, 1, 1, 1, 0.7],
-    { ease: defaultEasing },
-  );
+  const contentOpacity = useTransform(progress, getKeyframes(timingOffsets), [0.3, 1, 1, 1, 0.7], {
+    ease: defaultEasing,
+  });
 
   // Description opacity (fades in slightly later)
   const descOpacity = useTransform(
@@ -305,19 +280,12 @@ function FeatureItem({
   );
 
   // Title scale
-  const titleScale = useTransform(
-    progress,
-    getKeyframes(timingOffsets),
-    [0.82, 1, 1, 1, 1],
-    { ease: defaultEasing },
-  );
+  const titleScale = useTransform(progress, getKeyframes(timingOffsets), [0.82, 1, 1, 1, 1], {
+    ease: defaultEasing,
+  });
 
   // Vertical position
-  const yPercent = useTransform(
-    progress,
-    [0, 1],
-    [index * 100, (index - totalItems) * 100],
-  );
+  const yPercent = useTransform(progress, [0, 1], [index * 100, (index - totalItems) * 100]);
 
   // Always call hooks in a stable order; only conditionally *use* the value.
   const yValue = useMotionTemplate`${yPercent}%`;
@@ -326,7 +294,7 @@ function FeatureItem({
     <motion.div
       ref={itemRef}
       className={cn(
-        "w-full max-w-[min(768px,100%)] will-change-[opacity,transform] gpu-text",
+        "gpu-text w-full max-w-[min(768px,100%)] will-change-[opacity,transform]",
         "flex justify-center gap-6 md:gap-8",
         "px-6 sm:px-8",
         isNarrow ? "relative" : "absolute top-[50%] min-h-52",
@@ -339,35 +307,35 @@ function FeatureItem({
         <div className="absolute flex size-full items-start justify-center">
           <div
             className={cn(
-              "border-s border-s-foreground-300",
+              "border-s-foreground-300 border-s",
               index === totalItems - 1 ? "h-screen" : "h-full",
             )}
           />
         </div>
         {/* Circle indicator */}
         <motion.div
-          className="relative mt-1 size-6 rounded-full bg-white will-change-transform dark:bg-background-150 md:mt-0 md:size-8"
+          className="dark:bg-background-150 relative mt-1 size-6 rounded-full bg-white will-change-transform md:mt-0 md:size-8"
           style={{ scale: indicatorScale }}
         >
           {/* State 1: Empty border circle */}
           <motion.div
-            className="absolute inset-0 rounded-full border border-foreground-350 bg-background-200 will-change-[opacity]"
+            className="border-foreground-350 bg-background-200 absolute inset-0 rounded-full border will-change-[opacity]"
             style={{ opacity: borderOpacity }}
           />
           {/* State 2: White circle with colored checkmark (active) */}
           <motion.div
-            className="absolute inset-0 flex items-center justify-center rounded-full bg-white will-change-[opacity] dark:bg-background-150"
+            className="dark:bg-background-150 absolute inset-0 flex items-center justify-center rounded-full bg-white will-change-[opacity]"
             style={{ opacity: activeOpacity }}
           >
-            <CheckCircleColorDark className="size-8 shrink-0 dark:hidden md:size-10" />
-            <CheckCircleColorLight className="hidden size-8 shrink-0 dark:block md:size-10" />
+            <CheckCircleColorDark className="size-8 shrink-0 md:size-10 dark:hidden" />
+            <CheckCircleColorLight className="hidden size-8 shrink-0 md:size-10 dark:block" />
           </motion.div>
           {/* State 3: Muted circle with gray checkmark (done) */}
           <motion.div
-            className="absolute inset-0 flex items-center justify-center rounded-full bg-background-300 will-change-[opacity]"
+            className="bg-background-300 absolute inset-0 flex items-center justify-center rounded-full will-change-[opacity]"
             style={{ opacity: doneOpacity }}
           >
-            <CheckCircleMono className="size-8 shrink-0 text-foreground-400 dark:text-foreground-600 md:size-10" />
+            <CheckCircleMono className="text-foreground-400 dark:text-foreground-600 size-8 shrink-0 md:size-10" />
           </motion.div>
         </motion.div>
       </div>
@@ -381,7 +349,7 @@ function FeatureItem({
         style={{ opacity: contentOpacity }}
       >
         <motion.h1
-          className="w-full origin-left will-change-transform text-lg-medium gpu-text md:text-xl rtl:origin-right"
+          className="text-lg-medium gpu-text w-full origin-left will-change-transform md:text-xl rtl:origin-right"
           style={{ scale: shouldReduceMotion || isNarrow ? undefined : titleScale }}
         >
           {t(feature.titleKey)}
@@ -390,16 +358,10 @@ function FeatureItem({
           className="flex flex-col gap-4 pt-1.5 will-change-[opacity]"
           style={{ opacity: descOpacity }}
         >
-          <div className="text-base-dense sm:line-clamp-2">
-            {t(feature.descriptionKey)}
-          </div>
+          <div className="text-base-dense sm:line-clamp-2">{t(feature.descriptionKey)}</div>
           <div className="flex flex-wrap gap-2">
             {feature.actionItems.map((action, ai) => (
-              <ActionBadge
-                key={ai}
-                labelKey={action.labelKey}
-                icon={action.icon}
-              />
+              <ActionBadge key={ai} labelKey={action.labelKey} icon={action.icon} />
             ))}
           </div>
         </motion.div>
@@ -415,12 +377,7 @@ const CHECK_PATH =
 
 function CheckCircleMono({ className }: { className?: string }) {
   return (
-    <svg
-      viewBox="0 0 20 20"
-      fill="none"
-      className={className}
-      aria-hidden="true"
-    >
+    <svg viewBox="0 0 20 20" fill="none" className={className} aria-hidden="true">
       <path
         d="M10 2.5C14.1421 2.5 17.5 5.85786 17.5 10C17.5 14.1421 14.1421 17.5 10 17.5C5.85786 17.5 2.5 14.1421 2.5 10C2.5 5.85786 5.85786 2.5 10 2.5Z"
         stroke="currentColor"
@@ -438,12 +395,7 @@ function CheckCircleColorLight({ className }: { className?: string }) {
   const reactId = useId();
   const id = `check-circle-color-light-${reactId.replace(/:/g, "")}`;
   return (
-    <svg
-      viewBox="0 0 20 20"
-      fill="none"
-      className={className}
-      aria-hidden="true"
-    >
+    <svg viewBox="0 0 20 20" fill="none" className={className} aria-hidden="true">
       <g clipPath={`url(#${id}-clip)`}>
         <path
           opacity={0.5}
@@ -462,7 +414,10 @@ function CheckCircleColorLight({ className }: { className?: string }) {
       <defs>
         <linearGradient
           id={`${id}-grad`}
-          x1={10} y1={2} x2={10} y2={18}
+          x1={10}
+          y1={2}
+          x2={10}
+          y2={18}
           gradientUnits="userSpaceOnUse"
         >
           <stop stopColor="#6CCF90" />
@@ -480,12 +435,7 @@ function CheckCircleColorDark({ className }: { className?: string }) {
   const reactId = useId();
   const id = `check-circle-color-dark-${reactId.replace(/:/g, "")}`;
   return (
-    <svg
-      viewBox="0 0 20 20"
-      fill="none"
-      className={className}
-      aria-hidden="true"
-    >
+    <svg viewBox="0 0 20 20" fill="none" className={className} aria-hidden="true">
       <g clipPath={`url(#${id}-clip)`}>
         <path
           d="M10 2C14.4183 2 18 5.58172 18 10C18 14.4183 14.4183 18 10 18C5.58172 18 2 14.4183 2 10C2 5.58172 5.58172 2 10 2Z"
@@ -502,7 +452,10 @@ function CheckCircleColorDark({ className }: { className?: string }) {
       <defs>
         <linearGradient
           id={`${id}-grad`}
-          x1={10} y1={2} x2={10} y2={18}
+          x1={10}
+          y1={2}
+          x2={10}
+          y2={18}
           gradientUnits="userSpaceOnUse"
         >
           <stop stopColor="#6CCF90" />

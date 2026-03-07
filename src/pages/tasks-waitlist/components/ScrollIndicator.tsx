@@ -42,11 +42,7 @@ export function ScrollIndicator({
         animate={{
           opacity: shouldReduceMotion ? 1 : [0.25, 1, 1, 0.25, 0.25],
         }}
-        transition={
-          shouldReduceMotion
-            ? {}
-            : { ...loopTransition, times: [0, 0.15, 0.3, 0.7, 1] }
-        }
+        transition={shouldReduceMotion ? {} : { ...loopTransition, times: [0, 0.15, 0.3, 0.7, 1] }}
       >
         <ChevronDownIcon className={iconClass} />
       </motion.div>

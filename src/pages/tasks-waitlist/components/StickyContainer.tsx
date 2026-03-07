@@ -26,18 +26,10 @@ export function StickyContainer({
   stickyPosition = "top-0",
   height = "viewport",
 }: StickyContainerProps) {
-  const heightClass =
-    height === "auto" ? "h-auto" : "h-[100dvh] sm:h-lenis-wrapper";
+  const heightClass = height === "auto" ? "h-auto" : "h-[100dvh] sm:h-lenis-wrapper";
 
   return (
-    <div
-      className={cn(
-        heightClass,
-        sticky && "sticky",
-        sticky && stickyPosition,
-        className,
-      )}
-    >
+    <div className={cn(heightClass, sticky && "sticky", sticky && stickyPosition, className)}>
       {children}
     </div>
   );

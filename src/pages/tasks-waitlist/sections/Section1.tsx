@@ -13,7 +13,6 @@ import { useTranslation } from "@/lib/i18n";
 import { useReducedMotion } from "@/lib/hooks";
 import { useThemeValue } from "@/lib/theme";
 import { defaultEasing } from "@/lib/easing";
-import { CONTENT_MAX_WIDTH } from "../constants";
 import { useSectionContext } from "../context/SectionContext";
 import { useLenisScrollContext } from "../context/LenisScrollContext";
 import { useScrollProgress } from "../hooks/useScrollProgress";
@@ -48,8 +47,12 @@ export function Section1({ sectionRef: externalSectionRef }: Section1Props) {
   const bgOpacity = useTransform(progress, [0, 0.5, 1], [1, 1, 0], { ease: defaultEasing });
   const blurPx = useTransform(progress, [0, 1], [0, 10], { ease: defaultEasing });
   const bgFilter = useMotionTemplate`blur(${blurPx}px)`;
-  const contentFadeOpacity = useTransform(progress, [0, 0.5, 1], [1, 0, 0], { ease: defaultEasing });
-  const contentDisplay = useTransform(progress, [0, 0.999, 1], ["flex", "flex", "none"], { ease: defaultEasing });
+  const contentFadeOpacity = useTransform(progress, [0, 0.5, 1], [1, 0, 0], {
+    ease: defaultEasing,
+  });
+  const contentDisplay = useTransform(progress, [0, 0.999, 1], ["flex", "flex", "none"], {
+    ease: defaultEasing,
+  });
 
   // Reduced motion / narrow fallbacks
   const rmOuterOpacity = useTransform(progress, [0, 0.999, 1], [1, 1, 0]);
@@ -67,18 +70,15 @@ export function Section1({ sectionRef: externalSectionRef }: Section1Props) {
   const contentDisp = shouldReduceMotion ? rmContentDisplay : contentDisplay;
 
   return (
-    <StickyContainer
-      sticky={sticky}
-      className="relative"
-    >
-      <div className={cn("size-full", sticky ? "fixed inset-0" : "relative") }>
+    <StickyContainer sticky={sticky} className="relative">
+      <div className={cn("size-full", sticky ? "fixed inset-0" : "relative")}>
         <motion.div
-          className="absolute size-full overflow-hidden bg-[#423B3E] will-change-[opacity] @container/section-one dark:bg-background-150"
+          className="dark:bg-background-150 @container/section-one absolute size-full overflow-hidden bg-[#423B3E] will-change-[opacity]"
           style={{ opacity: outerOp }}
         >
           {/* Background image layer */}
           <motion.div
-            className="absolute inset-0 isolate bg-background-250 will-change-[transform,opacity] dark:bg-background-250"
+            className="bg-background-250 dark:bg-background-250 absolute inset-0 isolate will-change-[transform,opacity]"
             style={{ scale: bgSc, opacity: bgOp, filter: bgFi }}
           >
             <img
@@ -86,12 +86,12 @@ export function Section1({ sectionRef: externalSectionRef }: Section1Props) {
               src={`/static/cmc/images/tasks/waitlist/background/background-${theme ?? "light"}.jpg`}
               alt="Background"
             />
-            <div className="absolute bottom-0 h-32 w-full bg-gradient-to-b from-transparent to-background-250" />
+            <div className="to-background-250 absolute bottom-0 h-32 w-full bg-gradient-to-b from-transparent" />
           </motion.div>
 
           {/* Content layer */}
           <motion.div
-            className="absolute inset-0 flex flex-col items-start justify-between overflow-hidden text-foreground-800 will-change-[opacity]"
+            className="text-foreground-800 absolute inset-0 flex flex-col items-start justify-between overflow-hidden will-change-[opacity]"
             style={{ opacity: contentOp, display: contentDisp }}
           >
             {/* Top: Copilot wordmark */}
@@ -105,7 +105,7 @@ export function Section1({ sectionRef: externalSectionRef }: Section1Props) {
             {/* Bottom: headline + description + CTA + scroll indicator */}
             <div className="absolute bottom-0 mb-0 flex w-full flex-col flex-wrap justify-between gap-x-10 gap-y-4 p-5 @[768px]/section-one:flex-row @[768px]/section-one:items-end @[768px]/section-one:gap-8 @[768px]/section-one:p-12 @[768px]/section-one:pe-6">
               {/* Headline */}
-              <div className="inline-block max-w-[min(420px,75%)] shrink-0 grow text-3xl-medium @[768px]/section-one:flex @[768px]/section-one:max-w-full @[768px]/section-one:flex-col @[768px]/section-one:!text-[60px] @[768px]/section-one:!leading-[60px] @[768px]/section-one:text-4xl-medium">
+              <div className="text-3xl-medium @[768px]/section-one:text-4xl-medium inline-block max-w-[min(420px,75%)] shrink-0 grow @[768px]/section-one:flex @[768px]/section-one:max-w-full @[768px]/section-one:flex-col @[768px]/section-one:!text-[60px] @[768px]/section-one:!leading-[60px]">
                 <span>{t("tasks.waitList.section1.headlineTop")}</span>
                 <span>{t("tasks.waitList.section1.headlineBottom")}</span>
               </div>
@@ -116,7 +116,7 @@ export function Section1({ sectionRef: externalSectionRef }: Section1Props) {
               </div>
 
               {/* Description + CTA */}
-              <div className="flex grow flex-col gap-4 text-md @[1024px]/section-one:max-w-[420px] md:gap-2.5">
+              <div className="text-md flex grow flex-col gap-4 md:gap-2.5 @[1024px]/section-one:max-w-[420px]">
                 <div className="max-w-[420px] @[1024px]/section-one:max-w-full">
                   {t("tasks.waitList.section1.description")}
                 </div>
@@ -147,14 +147,9 @@ function ScrollHint({ stacked = false }: { stacked?: boolean }) {
         )}
         isActive={false}
       >
-        <div className="text-base-dense">
-          {t("tasks.waitList.footer.scrollIndicator")}
-        </div>
+        <div className="text-base-dense">{t("tasks.waitList.footer.scrollIndicator")}</div>
       </ShimmerText>
-      <ScrollIndicator
-        size={stacked ? "size-10" : "size-8"}
-        gap={stacked ? "-mt-7" : "-mt-6"}
-      />
+      <ScrollIndicator size={stacked ? "size-10" : "size-8"} gap={stacked ? "-mt-7" : "-mt-6"} />
     </div>
   );
 }

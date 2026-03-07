@@ -30,11 +30,8 @@ export function useLenisSetup({
   useEffect(() => {
     if (!wrapper.current || !content.current) return;
 
-    const gestureOrientation =
-      orientation === "horizontal" ? "both" : "vertical";
-    const prefersReducedMotion = window.matchMedia(
-      "(prefers-reduced-motion: reduce)",
-    ).matches;
+    const gestureOrientation = orientation === "horizontal" ? "both" : "vertical";
+    const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
     const instance = new Lenis({
       wrapper: wrapper.current,

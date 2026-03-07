@@ -166,8 +166,7 @@ export function useImageTransform({
       }
 
       // Calculate offset from center
-      const xOffset =
-        targetRect.x - center.x + (center.width * (scaleFactor - 1)) / 2;
+      const xOffset = targetRect.x - center.x + (center.width * (scaleFactor - 1)) / 2;
 
       let yOffset = targetRect.y - center.y;
       const adjustmentDivisor = isDesktop ? 5 : 10;
@@ -251,8 +250,7 @@ export function useImageTransform({
     if (measuredPositions.length === 0) return progressBreakpoints.map(() => 1);
     const values: number[] = [];
     for (const [i, pos] of measuredPositions.entries()) {
-      const prevScale =
-        i === 0 ? pos.scale : (measuredPositions[i - 1]?.scale ?? pos.scale);
+      const prevScale = i === 0 ? pos.scale : (measuredPositions[i - 1]?.scale ?? pos.scale);
       values.push(prevScale, pos.scale);
     }
     return values;
@@ -265,12 +263,9 @@ export function useImageTransform({
   const y = useTransform(scrollProgress, progressBreakpoints, yOutputValues, {
     ease: defaultEasing,
   });
-  const scale = useTransform(
-    scrollProgress,
-    progressBreakpoints,
-    scaleOutputValues,
-    { ease: defaultEasing },
-  );
+  const scale = useTransform(scrollProgress, progressBreakpoints, scaleOutputValues, {
+    ease: defaultEasing,
+  });
 
   return { x, y, scale };
 }

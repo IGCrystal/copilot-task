@@ -31,10 +31,7 @@ import type { ButtonPlacement, ButtonState } from "../types";
 
 // ===================== Button Style Variants =====================
 
-const BUTTON_STYLES: Record<
-  ButtonPlacement,
-  { size: string; idle: string; disabled: string }
-> = {
+const BUTTON_STYLES: Record<ButtonPlacement, { size: string; idle: string; disabled: string }> = {
   home: {
     size: "px-5 py-3 text-base-dense",
     idle: "bg-background-800 text-foreground-100 focus-visible:bg-black safe-hover:bg-black dark:bg-background-100 dark:text-foreground-900 dark:focus-visible:bg-background-150 dark:safe-hover:bg-background-150",
@@ -63,10 +60,7 @@ const BUTTON_LABELS: Record<ButtonState, string> = {
 
 // ===================== Helpers =====================
 
-function getButtonState(
-  status: string | undefined,
-  showingConfirmation: boolean,
-): ButtonState {
+function getButtonState(status: string | undefined, showingConfirmation: boolean): ButtonState {
   if (showingConfirmation) return "confirmation";
   if (status === "waitlisted" || status === "enrolled") return "joined";
   return "default";
@@ -172,12 +166,7 @@ export function WaitlistButton({ placement = "home" }: WaitlistButtonProps) {
   return (
     <>
       {/* Live region for screen readers */}
-      <span
-        role="status"
-        aria-live="polite"
-        aria-atomic="true"
-        className="sr-only"
-      >
+      <span role="status" aria-live="polite" aria-atomic="true" className="sr-only">
         {isDisabled ? t(BUTTON_LABELS[buttonState]) : ""}
       </span>
 
@@ -186,7 +175,7 @@ export function WaitlistButton({ placement = "home" }: WaitlistButtonProps) {
         disabled={isDisabled}
         onClick={handleClick}
         className={cn(
-          "min-w-44 select-none rounded-full active:opacity-80",
+          "min-w-44 rounded-full select-none active:opacity-80",
           size,
           isDisabled ? disabled : idle,
         )}

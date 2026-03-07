@@ -37,10 +37,7 @@ export const EdgeIcon = createIcon(
 );
 
 // Cursor / click
-export const CursorClickIcon = createIcon(
-  "M13 2L3 14h9l-1 8 10-12h-9l1-8z",
-  "CursorClickIcon",
-);
+export const CursorClickIcon = createIcon("M13 2L3 14h9l-1 8 10-12h-9l1-8z", "CursorClickIcon");
 
 // Cloud / OneDrive
 export const OnedriveIcon = createIcon(
@@ -85,7 +82,4 @@ export const CalendarIcon = createIcon(
 );
 
 // Send
-export const SendEmailIcon = createIcon(
-  "M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z",
-  "SendEmailIcon",
-);
+export const SendEmailIcon = createIcon("M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z", "SendEmailIcon");

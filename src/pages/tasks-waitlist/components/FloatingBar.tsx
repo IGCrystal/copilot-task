@@ -111,7 +111,7 @@ export function FloatingBar({ className }: { className?: string }) {
     >
       <div
         className={cn(
-          "pointer-events-auto relative flex flex-col rounded-full p-1.5 shadow-tinted-lg",
+          "shadow-tinted-lg pointer-events-auto relative flex flex-col rounded-full p-1.5",
           "mb-5 sm:mb-8",
           "bg-background-100 text-foreground-900 dark:bg-background-150",
         )}
@@ -120,10 +120,7 @@ export function FloatingBar({ className }: { className?: string }) {
           <div className="flex shrink-0 items-center justify-center gap-1 px-2.5">
             {SHOW_LOGO_ICON}
             <div className="ms-1 mt-px shrink-0 pt-0.5">
-              <CopilotTasksLogo
-                className="h-[18px]"
-                title={t("tasks.waitList.footer.title")}
-              />
+              <CopilotTasksLogo className="h-[18px]" title={t("tasks.waitList.footer.title")} />
             </div>
           </div>
           <WaitlistButton placement="floating" />

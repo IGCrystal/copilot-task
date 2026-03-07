@@ -7,8 +7,7 @@
 @font-face {
   font-family: Ginto;
   font-style: normal;
-  src:
-    url(/static/cmc/fonts/Ginto-Copilot-Upright-Variable.woff2) format("woff2");
+  src: url(/static/cmc/fonts/Ginto-Copilot-Upright-Variable.woff2) format("woff2");
 }
 
 /* ===================== Color Palettes (RGB triplets) ===================== */
@@ -158,11 +157,15 @@
 
 /* ===================== Global Styles ===================== */
 
-html, body, #root {
+html,
+body,
+#root {
   margin: 0;
   padding: 0;
   height: 100%;
-  font-family: Ginto, ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  font-family:
+    Ginto, ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji",
+    "Segoe UI Symbol", "Noto Color Emoji";
   background: rgb(var(--color-background-100));
   color: rgb(var(--color-foreground-800));
   -webkit-font-smoothing: antialiased;
@@ -178,27 +181,35 @@ html, body, #root {
 
 .text-base-dense {
   font-size: 1rem;
-  font-variation-settings: "opsz" 40, "wght" 410;
+  font-variation-settings:
+    "opsz" 40,
+    "wght" 410;
   line-height: 1.375rem;
 }
 
 .text-base-dense-medium {
   font-size: 1.000625rem;
-  font-variation-settings: "opsz" 40, "wght" 480;
+  font-variation-settings:
+    "opsz" 40,
+    "wght" 480;
   font-weight: 480;
   line-height: 1.375rem;
 }
 
 .text-md {
   font-size: 1.125rem;
-  font-variation-settings: "opsz" 40, "wght" 460;
+  font-variation-settings:
+    "opsz" 40,
+    "wght" 460;
   letter-spacing: -0.005em;
   line-height: 1.625rem;
 }
 
 .text-lg-medium {
   font-size: 1.25rem;
-  font-variation-settings: "opsz" 40, "wght" 480;
+  font-variation-settings:
+    "opsz" 40,
+    "wght" 480;
   font-weight: 480;
   letter-spacing: -0.01em;
   line-height: 1.625rem;
@@ -206,7 +217,9 @@ html, body, #root {
 
 .text-2xl-medium {
   font-size: 1.75rem;
-  font-variation-settings: "opsz" 40, "wght" 520;
+  font-variation-settings:
+    "opsz" 40,
+    "wght" 520;
   font-weight: 520;
   letter-spacing: -0.01em;
   line-height: 2rem;
@@ -214,7 +227,9 @@ html, body, #root {
 
 .text-3xl-medium {
   font-size: 2rem;
-  font-variation-settings: "opsz" 40, "wght" 520;
+  font-variation-settings:
+    "opsz" 40,
+    "wght" 520;
   font-weight: 520;
   letter-spacing: -0.02em;
   line-height: 2.5rem;
@@ -222,7 +237,9 @@ html, body, #root {
 
 .text-4xl-medium {
   font-size: 2.375rem;
-  font-variation-settings: "opsz" 40, "wght" 520;
+  font-variation-settings:
+    "opsz" 40,
+    "wght" 520;
   font-weight: 520;
   letter-spacing: -0.02em;
   line-height: 2.5rem;
@@ -584,9 +601,10 @@ html, body, #root {
 }
 
 .shadow-tinted-lg {
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
-              0 4px 6px -4px rgba(0, 0, 0, 0.1),
-              0 0 0 1px rgba(0, 0, 0, 0.05);
+  box-shadow:
+    0 10px 15px -3px rgba(0, 0, 0, 0.1),
+    0 4px 6px -4px rgba(0, 0, 0, 0.1),
+    0 0 0 1px rgba(0, 0, 0, 0.05);
 }
 
 .gpu-text {
@@ -616,8 +634,12 @@ html, body, #root {
 }
 
 @media (hover: hover) {
-  .safe-hover\:bg-black:hover { background-color: black; }
-  .safe-hover\:bg-white\/90:hover { background-color: rgba(255,255,255,0.9); }
+  .safe-hover\:bg-black:hover {
+    background-color: black;
+  }
+  .safe-hover\:bg-white\/90:hover {
+    background-color: rgba(255, 255, 255, 0.9);
+  }
   [data-theme="dark"] .dark\:safe-hover\:bg-background-150:hover {
     background-color: rgb(var(--color-background-150));
   }

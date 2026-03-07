@@ -49,9 +49,7 @@ export const Section = forwardRef<HTMLElement, SectionProps>(
     const { t } = useTranslation();
 
     // Find section config for overrides
-    const sectionConfig = sectionId
-      ? SECTION_CONFIGS.find((s) => s.id === sectionId)
-      : undefined;
+    const sectionConfig = sectionId ? SECTION_CONFIGS.find((s) => s.id === sectionId) : undefined;
 
     const narrowOverrides = isNarrow ? sectionConfig?.narrowOverrides : undefined;
     const reducedMotionOverrides = shouldReduceMotion
@@ -96,9 +94,7 @@ export const Section = forwardRef<HTMLElement, SectionProps>(
       minHeightStyle = `calc((100dvh - ${HEADER_HEIGHT_OFFSET}px) * ${totalMultiplier})`;
     }
     const minHeightClass =
-      !isZeroHeight && totalMultiplier === 1
-        ? "min-h-[100dvh] md:min-h-lenis-wrapper"
-        : undefined;
+      !isZeroHeight && totalMultiplier === 1 ? "min-h-[100dvh] md:min-h-lenis-wrapper" : undefined;
 
     // Negative margin for overlap
     const marginTopStyle = effectiveOverlap
@@ -107,13 +103,10 @@ export const Section = forwardRef<HTMLElement, SectionProps>(
 
     const zIndex = sectionConfig?.zIndex;
     const ariaLabel = sectionConfig?.ariaLabel;
-    const ariaLabelText =
-      typeof ariaLabel === "string" ? String(t(ariaLabel)) : undefined;
+    const ariaLabelText = typeof ariaLabel === "string" ? String(t(ariaLabel)) : undefined;
 
     // Compute scroll tracking offset strings
-    const overlapFraction = effectiveOverlap
-      ? previousSectionMultiplier / totalMultiplier
-      : 0;
+    const overlapFraction = effectiveOverlap ? previousSectionMultiplier / totalMultiplier : 0;
     const [startEdge, endEdge] = scrollTrackingEdge;
 
     const startEdgeName = startEdge === "top" ? "start" : "end";
@@ -151,7 +144,7 @@ export const Section = forwardRef<HTMLElement, SectionProps>(
           aria-label={ariaLabelText}
           tabIndex={-1}
           className={cn(
-            "pointer-events-none relative select-text outline-none",
+            "pointer-events-none relative outline-none select-text",
             minHeightClass,
             className,
           )}

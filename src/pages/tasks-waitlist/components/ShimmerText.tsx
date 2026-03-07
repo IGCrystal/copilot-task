@@ -14,9 +14,5 @@ interface ShimmerTextProps {
 }
 
 export function ShimmerText({ children, className, isActive = false }: ShimmerTextProps) {
-  return (
-    <div className={cn(className, isActive && "animate-pulse")}>
-      {children}
-    </div>
-  );
+  return <div className={cn(className, isActive && "animate-pulse")}>{children}</div>;
 }

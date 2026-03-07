@@ -18,7 +18,8 @@ const MOCK_TRANSLATIONS: Record<string, string> = {
   "tasks.waitList.section2.carouselPause": "Pause animation",
   "tasks.waitList.section3.ariaLabel": "Features",
   "tasks.waitList.section3.headerHeadline": "What can Copilot Tasks do?",
-  "tasks.waitList.section3.headerSubtitle": "Copilot Tasks can handle complex, multi-step work -- so you can focus on what matters most.",
+  "tasks.waitList.section3.headerSubtitle":
+    "Copilot Tasks can handle complex, multi-step work -- so you can focus on what matters most.",
   "tasks.waitList.section3.items.title1": "Stays on top of your tasks",
   "tasks.waitList.section3.items.description1":
     "Copilot monitors your tasks and proactively keeps things moving — refreshing research, checking for updates, and nudging you when something needs attention.",
@@ -55,24 +56,18 @@ const MOCK_TRANSLATIONS: Record<string, string> = {
     "Copilot helps you plan trips, compare options, and organize your findings.",
 
   // Section 4 - image carousel copy (used by wide + narrow variants)
-  "tasks.waitList.section4.images.image1Alt":
-    "Copilot researching information on the web.",
-  "tasks.waitList.section4.images.image1TextHeadline":
-    "Research in depth",
+  "tasks.waitList.section4.images.image1Alt": "Copilot researching information on the web.",
+  "tasks.waitList.section4.images.image1TextHeadline": "Research in depth",
   "tasks.waitList.section4.images.image1TextDescription":
     "Copilot browses the web to find, compare, and summarize information for you.",
 
-  "tasks.waitList.section4.images.image2Alt":
-    "Copilot drafting a document.",
-  "tasks.waitList.section4.images.image2TextHeadline":
-    "Draft with precision",
+  "tasks.waitList.section4.images.image2Alt": "Copilot drafting a document.",
+  "tasks.waitList.section4.images.image2TextHeadline": "Draft with precision",
   "tasks.waitList.section4.images.image2TextDescription":
     "From emails to documents, Copilot creates polished drafts based on your instructions.",
 
-  "tasks.waitList.section4.images.image3Alt":
-    "Copilot planning and organizing a project.",
-  "tasks.waitList.section4.images.image3TextHeadline":
-    "Plan and organize",
+  "tasks.waitList.section4.images.image3Alt": "Copilot planning and organizing a project.",
+  "tasks.waitList.section4.images.image3TextHeadline": "Plan and organize",
   "tasks.waitList.section4.images.image3TextDescription":
     "Copilot helps you plan trips, compare options, and organize your findings.",
 

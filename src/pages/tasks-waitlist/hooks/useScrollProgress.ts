@@ -81,11 +81,9 @@ export function useScrollProgress({
             console.warn(`Invalid percentage value: "${edge}"`);
             position = orientation === "vertical" ? rect.top : rect.left;
           } else {
-            const dimension =
-              orientation === "vertical" ? rect.height : rect.width;
+            const dimension = orientation === "vertical" ? rect.height : rect.width;
             position =
-              (orientation === "vertical" ? rect.top : rect.left) +
-              (dimension * percent) / 100;
+              (orientation === "vertical" ? rect.top : rect.left) + (dimension * percent) / 100;
           }
         } else {
           switch (edge) {
@@ -111,8 +109,7 @@ export function useScrollProgress({
 
       // Resolve a viewport edge to a pixel position
       const resolveViewportEdge = (edge: Edge): number => {
-        const viewportSize =
-          orientation === "vertical" ? window.innerHeight : window.innerWidth;
+        const viewportSize = orientation === "vertical" ? window.innerHeight : window.innerWidth;
 
         if (edge.endsWith("%")) {
           const percent = parseFloat(edge);
@@ -178,14 +175,12 @@ export function useScrollProgress({
       if (debug) {
         console.log("Range:", scrollRange);
         if (scrollRange === 0) console.log("Animation Type: INSTANT");
-        else if (scrollRange < 0)
-          console.log("Animation Type: REVERSE (normalized to 0->1)");
+        else if (scrollRange < 0) console.log("Animation Type: REVERSE (normalized to 0->1)");
         else console.log("Animation Type: NORMAL");
       }
 
       if (scrollRange !== 0) {
-        const linearProgress =
-          (currentScroll - startScrollPosition) / scrollRange;
+        const linearProgress = (currentScroll - startScrollPosition) / scrollRange;
         // Reverse animations are normalized so progress still goes 0 -> 1
         rawProgress = scrollRange < 0 ? 1 - linearProgress : linearProgress;
 
@@ -208,15 +203,7 @@ export function useScrollProgress({
 
       scrollYProgress.set(clampedProgress);
     },
-    [
-      target,
-      offset,
-      parseOffset,
-      orientation,
-      debug,
-      scrollYProgress,
-      negativeMarginOffset,
-    ],
+    [target, offset, parseOffset, orientation, debug, scrollYProgress, negativeMarginOffset],
   );
 
   // Initialize and recompute on mount

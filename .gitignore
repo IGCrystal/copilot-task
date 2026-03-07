@@ -46,3 +46,4 @@ coverage/
 ## Generated files or Scripts
 /snapshot
 scripts/download-referenced-assets.mjs
+/.cache
