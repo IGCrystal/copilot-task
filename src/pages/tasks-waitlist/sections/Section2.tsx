@@ -369,7 +369,7 @@ export function Section2({ sectionRef: externalSectionRef }: Section2Props) {
   );
 }
 
-// ===================== Helpers =====================
+// Helpers
 
 /** Enrich items with diagonal stagger values */
 function prepareItems(layout: RolodexLayout): RolodexItemWithStagger[] {
@@ -382,7 +382,7 @@ function prepareItems(layout: RolodexLayout): RolodexItemWithStagger[] {
   }));
 }
 
-// ===================== Inline Icons =====================
+// Inline icons
 
 function PauseIcon({ className }: { className?: string }) {
   return (

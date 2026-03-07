@@ -29,7 +29,7 @@ import {
 import { useWaitlistStatus, useJoinWaitlist } from "../api/waitlist";
 import type { ButtonPlacement, ButtonState } from "../types";
 
-// ===================== Button Style Variants =====================
+// Button style variants
 
 const BUTTON_STYLES: Record<ButtonPlacement, { size: string; idle: string; disabled: string }> = {
   home: {
@@ -58,7 +58,7 @@ const BUTTON_LABELS: Record<ButtonState, string> = {
   signIn: "tasks.waitList.footer.ctaSignIn",
 };
 
-// ===================== Helpers =====================
+// Helpers
 
 function getButtonState(status: string | undefined, showingConfirmation: boolean): ButtonState {
   if (showingConfirmation) return "confirmation";
@@ -66,7 +66,7 @@ function getButtonState(status: string | undefined, showingConfirmation: boolean
   return "default";
 }
 
-// ===================== Component =====================
+// Component
 
 interface WaitlistButtonProps {
   placement?: ButtonPlacement;

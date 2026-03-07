@@ -250,7 +250,7 @@ function WideCarousel({ scrollYProgress }: WideCarouselProps) {
   );
 }
 
-// ===================== Image Overlay =====================
+// Image overlay
 
 interface ImageOverlayProps {
   config: (typeof IMAGE_ANIMATION_CONFIGS)[number];
@@ -462,7 +462,7 @@ function TextOverlay({
   );
 }
 
-// ===================== Narrow Carousel =====================
+// Narrow carousel
 
 function NarrowCarousel() {
   const theme = useThemeValue();
